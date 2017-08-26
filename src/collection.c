@@ -1,8 +1,9 @@
-#include <object/api/collection.h>
+#include <jco/api/collection.h>
 
-#include <object/object.h>
-#include <object/api/iterator.h>
-#include <object/api/string.h>
+#include <jco/api/iterator.h>
+#include <jco/api/string.h>
+
+#include <jco/jco.h>
 
 
 static unsigned int

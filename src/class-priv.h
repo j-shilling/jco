@@ -1,7 +1,7 @@
 #ifndef __CLASS_PRIV_H__
 #define __CLASS_PRIV_H__
 
-#include <object/class.h>
+#include <jco/jco.h>
 #include <object-priv.h>
 
 #include <stdarg.h>

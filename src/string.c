@@ -1,5 +1,4 @@
-#include <object/api/string.h>
-
+#include <jco/api/string.h>
 #include <string-priv.h>
 
 #include <stdlib.h>
@@ -7,7 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include <object/object.h>
+#include <jco/jco.h>
 
 const struct Class * String = NULL;
 

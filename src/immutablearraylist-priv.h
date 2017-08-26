@@ -3,7 +3,7 @@
 
 #include <object-priv.h>
 
-#include <object/class.h>
+#include <jco/base/class.h>
 
 struct ImmutableArrayList
 {

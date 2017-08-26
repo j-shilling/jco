@@ -1,10 +1,9 @@
-#include <object/object.h>
 #include <object-priv.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <object/api/string.h>
+#include <jco/jco.h>
 
 void *
 new (const struct Class *class, ...)

@@ -1,6 +1,5 @@
-#include <object/api/mutablecollection.h>
-
-#include <object/object.h>
+#include <jco/api/mutablecollection.h>
+#include <jco/jco.h>
 
 bool
 mutable_collection_add_all_impl (const void *_self, const void *c)

@@ -1,9 +1,9 @@
-#include <object/api/arraylist.h>
+#include <jco/api/arraylist.h>
 #include <arraylist-priv.h>
 
-#include <object/object.h>
-
 #include <string.h>
+
+#include <jco/jco.h>
 
 const struct Class *ArrayList = NULL;
 

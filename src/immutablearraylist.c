@@ -1,9 +1,9 @@
-#include <object/api/immutablearraylist.h>
+#include <jco/api/immutablearraylist.h>
 #include <immutablearraylist-priv.h>
 
-#include <object/object.h>
-
 #include <string.h>
+
+#include <jco/jco.h>
 
 const struct Class *ImmutableArrayList = NULL;
 const struct Class *ArrayListIterator = NULL;

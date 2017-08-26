@@ -5,7 +5,7 @@ AC_PREREQ([2.69])
 AC_INIT([libobject], [0.1], [shilling.jake@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror subdir-objects])
 
-AC_CONFIG_SRCDIR([include/object/object.h])
+AC_CONFIG_SRCDIR([include/jco/jco.h])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

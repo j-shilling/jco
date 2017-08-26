@@ -1,7 +1,7 @@
-#include <object/api/list.h>
+#include <jco/api/list.h>
+#include <jco/api/iterator.h>
 
-#include <object/object.h>
-#include <object/api/iterator.h>
+#include <jco/jco.h>
 
 static bool
 list_add_all_at_impl (const void *_self, const void *c, unsigned int index)

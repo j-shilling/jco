@@ -1,5 +1,5 @@
-#include <object/object.h>
-#include <object/api/string.h>
+#include <jco/jco.h>
+#include <jco/api/string.h>
 
 #include <check.h>
 #include <string.h>

@@ -1,10 +1,3 @@
-/*
- * arraylist-priv.h
- *
- *  Created on: Aug 19, 2017
- *      Author: jake
- */
-
 #ifndef SRC_ARRAYLIST_PRIV_H_
 #define SRC_ARRAYLIST_PRIV_H_
 

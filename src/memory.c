@@ -1,10 +1,8 @@
-#include <object/memory.h>
-
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 
-#include <object/logger.h>
+#include <jco/jco.h>
 
 void *
 object_malloc (const size_t size)

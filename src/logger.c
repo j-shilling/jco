@@ -1,7 +1,3 @@
-#include <object/logger.h>
-
-#include <object/object.h>
-
 #include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
@@ -9,7 +5,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include <object/api/string.h>
+#include <jco/jco.h>
 
 static struct
 {

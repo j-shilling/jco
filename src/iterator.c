@@ -1,5 +1,5 @@
-#include <object/api/iterator.h>
-#include <object/object.h>
+#include <jco/api/iterator.h>
+#include <jco/jco.h>
 
 bool
 is_iterator (const void *_self)

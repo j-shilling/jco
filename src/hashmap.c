@@ -1,12 +1,10 @@
-#include "../include/object/api/hashmap.h"
-
+#include <jco/api/hashmap.h>
 #include <hashmap-priv.h>
 
 #include <stdbool.h>
 #include <stdarg.h>
 
-#include <object/object.h>
-#include <object/class.h>
+#include <jco/jco.h>
 
 /*
 struct HashMap

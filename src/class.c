@@ -1,5 +1,3 @@
-#include <object/class.h>
-
 #include <class-priv.h>
 
 #include <stdlib.h>
@@ -8,8 +6,7 @@
 #include <string.h>
 #include <math.h>
 
-#include <object/object.h>
-#include <object/api/string.h>
+#include <jco/jco.h>
 
 /*
  * STATIC HELPERS
