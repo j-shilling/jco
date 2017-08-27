@@ -6,15 +6,15 @@ mutable_collection_add_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
     {
-      logger_logf (WARNING, "%O is not a collection.", class_of (c));
+      logger_logf (WARNING, "%O is not a collection.", jco_class_of (c));
       return false;
     }
 
   bool ret = false;
   void *it = collection_iterator (c);
   while (iterator_has_next (it))
-    ret = ret && mutable_collection_add (_self, unref(iterator_next(it)));
-  unref (it);
+    ret = ret && mutable_collection_add (_self, jco_unref(iterator_next(it)));
+  jco_unref (it);
 
   return ret;
 }
@@ -24,15 +24,15 @@ mutable_collection_remove_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
       {
-        logger_logf (WARNING, "%O is not a collection.", class_of (c));
+        logger_logf (WARNING, "%O is not a collection.", jco_class_of (c));
         return false;
       }
 
   bool ret = false;
   void *it = collection_iterator (c);
   while (iterator_has_next (it))
-    ret = ret && mutable_collection_remove (_self, unref(iterator_next(it)));
-  unref (it);
+    ret = ret && mutable_collection_remove (_self, jco_unref(iterator_next(it)));
+  jco_unref (it);
 
   return ret;
 }
@@ -42,7 +42,7 @@ mutable_collection_retain_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
       {
-        logger_logf (WARNING, "%O is not a collection.", class_of (c));
+        logger_logf (WARNING, "%O is not a collection.", jco_class_of (c));
         return false;
       }
 
@@ -53,9 +53,9 @@ mutable_collection_retain_all_impl (const void *_self, const void *c)
       void * item = iterator_next (it);
       if (!collection_contains (c, item))
 	ret = ret && mutable_collection_remove (_self, item);
-      unref (item);
+      jco_unref (item);
     }
-  unref (it);
+  jco_unref (it);
   return ret;
 }
 
@@ -64,8 +64,8 @@ mutable_collection_clear_impl (const void *_self)
 {
   void *it = collection_iterator (_self);
   while (iterator_has_next (it))
-    mutable_collection_remove (_self, unref (iterator_next(it)));
-  unref (it);
+    mutable_collection_remove (_self, jco_unref (iterator_next(it)));
+  jco_unref (it);
 }
 
 bool

@@ -17,9 +17,9 @@ list_add_all_at_impl (const void *_self, const void *c, unsigned int index)
       void *item = iterator_next (it);
       list_add_at (_self, item, i);
       i++;
-      unref (item);
+      jco_unref (item);
     }
-  unref (it);
+  jco_unref (it);
 
   return true;
 }
@@ -29,7 +29,7 @@ list_index_of_impl (const void *_self, const void *o)
 {
   int size = collection_size (_self);
   for (int i = 0; i < size; i++)
-    if (equals (o, unref (list_get (_self, i))))
+    if (equals (o, jco_unref (list_get (_self, i))))
       return i;
 
   return -1;
@@ -40,7 +40,7 @@ list_last_index_of_impl (const void *_self, const void *o)
 {
   int size = collection_size (_self);
     for (int i = size; i >= 0; i++)
-      if (equals (o, unref (list_get (_self, i))))
+      if (equals (o, jco_unref (list_get (_self, i))))
         return i;
 
     return -1;
@@ -89,8 +89,8 @@ list_sort_impl (const void *_self, Comparator comparator)
 	      list_set (_self, i+1, x);
 	    }
 
-	  unref (x);
-	  unref (y);
+	  jco_unref (x);
+	  jco_unref (y);
 	}
 
       if (!changed)
@@ -101,11 +101,11 @@ list_sort_impl (const void *_self, Comparator comparator)
 static void *
 list_sublist_impl (const void *_self, unsigned int start, unsigned int end)
 {
-  preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_state (is_mutable_list (_self));
 
-  void *ret = new (class_of (_self));
+  void *ret = jco_new (jco_class_of (_self));
   for (int i = start; i <= end; i++)
-    mutable_collection_add (ret, unref (list_get(_self, i)));
+    mutable_collection_add (ret, jco_unref (list_get(_self, i)));
 
   return ret;
 }
@@ -137,8 +137,8 @@ is_immutable_list (const void *_self)
 void
 list_add_at (const void *_self, const void *o, unsigned int index)
 {
-  preconditions_check_state (is_mutable_list (_self));
-  preconditions_check_position (index, collection_size (_self));
+  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_position (index, collection_size (_self));
 
   void (*dft) (const void *, const void *, unsigned int) = 0;
   DEFINE_SELECTOR (list_add_at, dft, _self, o, index);
@@ -147,9 +147,9 @@ list_add_at (const void *_self, const void *o, unsigned int index)
 bool
 list_add_all_at (const void *_self, const void *c, unsigned int index)
 {
-  preconditions_check_state (is_mutable_list (_self));
-  preconditions_check_state (is_collection (c));
-  preconditions_check_position (index, collection_size (_self));
+  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_state (is_collection (c));
+  jco_preconditions_check_position (index, collection_size (_self));
 
   bool (*dft) (const void *, const void *, unsigned int) =
       list_add_all_at_impl;
@@ -159,8 +159,8 @@ list_add_all_at (const void *_self, const void *c, unsigned int index)
 void *
 list_get (const void *_self, unsigned int index)
 {
-  preconditions_check_state (is_mutable_list (_self));
-  preconditions_check_index (index, collection_size (_self));
+  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_index (index, collection_size (_self));
 
   void *(*dft) (const void *, unsigned int) = 0;
   DEFINE_SELECTOR (list_get, dft, _self, index);
@@ -169,7 +169,7 @@ list_get (const void *_self, unsigned int index)
 int
 list_index_of (const void *_self, const void *o)
 {
-  preconditions_check_state (is_list (_self));
+  jco_preconditions_check_state (is_list (_self));
 
   int (*dft) (const void *, const void *) =
       list_index_of_impl;
@@ -179,7 +179,7 @@ list_index_of (const void *_self, const void *o)
 int
 list_last_index_of (const void *_self, const void *o)
 {
-  preconditions_check_state (is_list (_self));
+  jco_preconditions_check_state (is_list (_self));
 
   int (*dft) (const void *, const void *) =
       list_last_index_of_impl;
@@ -189,8 +189,8 @@ list_last_index_of (const void *_self, const void *o)
 void *
 list_remove_at (const void *_self, unsigned int index)
 {
-  preconditions_check_state (is_mutable_list (_self));
-  preconditions_check_index (index, collection_size (_self));
+  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_index (index, collection_size (_self));
 
   void *(*dft) (const void *, unsigned int) =
       list_remove_at_impl;
@@ -200,8 +200,8 @@ list_remove_at (const void *_self, unsigned int index)
 void *
 list_set (const void *_self, unsigned int index, const void *o)
 {
-  preconditions_check_state (is_mutable_list (_self));
-  preconditions_check_position (index, collection_size (_self));
+  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_position (index, collection_size (_self));
 
   void * (*dft) (const void *, unsigned int, const void *) =
       list_set_impl;
@@ -211,8 +211,8 @@ list_set (const void *_self, unsigned int index, const void *o)
 void
 list_sort (const void *_self, Comparator comparator)
 {
-  preconditions_check_state (is_mutable_list (_self));
-  preconditions_check_not_null (comparator);
+  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_not_null (comparator);
 
   void (*dft) (const void *, Comparator) =
       list_sort_impl;
@@ -222,10 +222,10 @@ list_sort (const void *_self, Comparator comparator)
 void *
 list_sublist (const void *_self, unsigned int start, unsigned int end)
 {
-  preconditions_check_state (is_list (_self));
-  preconditions_check_index (start, collection_size (_self));
-  preconditions_check_index (end, collection_size (_self));
-  preconditions_check_state (start <= end);
+  jco_preconditions_check_state (is_list (_self));
+  jco_preconditions_check_index (start, collection_size (_self));
+  jco_preconditions_check_index (end, collection_size (_self));
+  jco_preconditions_check_state (start <= end);
 
   void *(*dft)(const void *, unsigned int, unsigned int) =
       list_sublist_impl;
@@ -243,7 +243,7 @@ list_equals (const void *_self, const void *o)
     return false;
 
   for (int i = 0; i < size; i++)
-    if (!equals(unref(list_get(_self, i)), unref(list_get (o, i))))
+    if (!equals(jco_unref(list_get(_self, i)), jco_unref(list_get (o, i))))
 	return false;
 
   return true;
@@ -259,9 +259,9 @@ list_hash_code (const void *_self)
     {
       void *item = iterator_next(it);
       ret = (31*ret) + (item == NULL ? 0 : hash_code (item));
-      unref (item);
+      jco_unref (item);
     }
-  unref (it);
+  jco_unref (it);
 
   return ret;
 }

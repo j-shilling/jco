@@ -12,8 +12,8 @@ static const struct Class object[] =
 	  MAGIC_NUMBER, object + 1
       },
       "Object", object, sizeof(struct Object), NULL,
-      object_constructor, object_destructor, object_equals, object_to_string,
-      object_hash_code
+      jco_object_constructor, jco_object_destructor, jco_object_equals, jco_object_to_string,
+      jco_object_hash_code
     },
 
     {
@@ -21,8 +21,8 @@ static const struct Class object[] =
 	  MAGIC_NUMBER, object + 1
       },
       "Class", object, sizeof(struct Class), NULL,
-      class_constructor, class_destructor, object_equals, class_to_string,
-      object_hash_code
+      class_constructor, class_destructor, jco_object_equals, class_to_string,
+      jco_object_hash_code
     }
  };
 

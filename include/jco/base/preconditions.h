@@ -4,7 +4,7 @@
 #include <jco/base/logger.h>
 #include <stdlib.h>
 
-#define preconditions_check_state(expr)			\
+#define jco_preconditions_check_state(expr)			\
   if (!expr)						\
     {							\
       logger_logf (SEVERE, 				\
@@ -12,19 +12,19 @@
 	__FILE__, __LINE__, #expr);			\
       exit (EXIT_FAILURE);				\
     }
-#define preconditions_check_state_msg(expr, fmt, ...)	\
+#define jco_preconditions_check_state_msg(expr, fmt, ...)	\
   if (!expr)						\
     {							\
       logger_logf (SEVERE, fmt, ##__VA_ARGS__);		\
       exit (EXIT_FAILURE);				\
     }
 
-#define preconditions_check_arg(expr)			\
-  preconditions_check_state (expr)
-#define preconditions_check_arg_msg(expr, fmt, ...)	\
-  preconditions_check_state (expr, fmt, ##__VA_ARGS__)
+#define jco_preconditions_check_arg(expr)			\
+  jco_preconditions_check_state (expr)
+#define jco_preconditions_check_arg_msg(expr, fmt, ...)		\
+  jco_preconditions_check_state_msg (expr, fmt, ##__VA_ARGS__)
 
-#define preconditions_check_not_null(ptr)		\
+#define jco_preconditions_check_not_null(ptr)		\
     if (!ptr)						\
       {							\
       logger_logf (SEVERE, 				\
@@ -32,14 +32,14 @@
 	__FILE__, __LINE__, #ptr);			\
       exit (EXIT_FAILURE);				\
       }
-#define preconditions_check_not_null_msg(ptr, fmt, ...)	\
+#define jco_preconditions_check_not_null_msg(ptr, fmt, ...)	\
   if (!ptr)						\
     {							\
       logger_logf (SEVERE, fmt, ##__VA_ARGS__);		\
       exit (EXIT_FAILURE);				\
     }
 
-#define preconditions_check_index(index, size)			\
+#define jco_preconditions_check_index(index, size)		\
    if (index < 0 || index >= size)				\
      {								\
        logger_logf (SEVERE,					\
@@ -48,14 +48,14 @@
 	  __FILE__, __LINE__, index, size);			\
        exit (EXIT_FAILURE);					\
      }
-#define preconditions_check_index_msg(index, fmt, ...)		\
+#define jco_preconditions_check_index_msg(index, fmt, ...)	\
    if (index < 0 || index >= size)				\
      {								\
        logger_logf (SEVERE, fmt, ##__VA_ARGS__);		\
        exit (EXIT_FAILURE);					\
      }
 
-#define preconditions_check_position(index, size)		\
+#define jco_preconditions_check_position(index, size)		\
    if (index < 0 || index > size)				\
      {								\
        logger_logf (SEVERE,					\
@@ -64,7 +64,7 @@
 	  __FILE__, __LINE__, index, size);			\
        exit (EXIT_FAILURE);					\
      }
-#define preconditions_check_position_msg(index, fmt, ...)	\
+#define jco_preconditions_check_position_msg(index, fmt, ...)	\
    if (index < 0 || index > size)				\
      {								\
        logger_logf (SEVERE, fmt, ##__VA_ARGS__);		\

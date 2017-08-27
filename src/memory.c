@@ -5,7 +5,7 @@
 #include <jco/jco.h>
 
 void *
-object_malloc (const size_t size)
+jco_malloc (const size_t size)
 {
   void *ret = malloc (size);
   if (NULL == ret)
@@ -17,14 +17,14 @@ object_malloc (const size_t size)
 }
 
 void
-object_free (const void *ptr)
+jco_free (const void *ptr)
 {
   if (ptr)
     free((void *)ptr);
 }
 
 void *
-object_calloc (const size_t nmemb, const size_t size)
+jco_calloc (const size_t nmemb, const size_t size)
 {
   void *ret = calloc (nmemb, size);
     if (NULL == ret)
@@ -36,7 +36,7 @@ object_calloc (const size_t nmemb, const size_t size)
 }
 
 void *
-object_realloc (const void *ptr, const size_t size)
+jco_realloc (const void *ptr, const size_t size)
 {
   void *ret = realloc ((void *)ptr, size);
     if (NULL == ret)

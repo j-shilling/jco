@@ -9,7 +9,7 @@
 #include <jco/base/object.h>
 
 #define DEFINE_SELECTOR(name, default_method, _self, ...) 			\
-      const struct Class *class = class_of (_self); 				\
+      const struct Class *class = jco_class_of (_self); 				\
       if (!class) 								\
 	{									\
 	  logger_log (SEVERE, "This object does not have a class.");		\

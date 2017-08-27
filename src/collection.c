@@ -13,9 +13,9 @@ collection_count (const void *_self, const void *o)
   void *it = collection_iterator (_self);
 
   while (iterator_has_next (it))
-    if (equals (o, unref (iterator_next (it))))
+    if (equals (o, jco_unref (iterator_next (it))))
       ret++;
-  unref (it);
+  jco_unref (it);
 
   return ret;
 }
@@ -23,12 +23,12 @@ collection_count (const void *_self, const void *o)
 static bool
 collection_contains_impl (const void *_self, const void *o)
 {
-  if (!is_descendant (o, collection_content_type (_self)))
+  if (!jco_is_descendant (o, collection_content_type (_self)))
     return false;
 
   void *it = collection_iterator (_self);
   while (iterator_has_next (it))
-    if (equals (o, unref (iterator_next(it))))
+    if (equals (o, jco_unref (iterator_next(it))))
       return true;
 
   return false;
@@ -40,7 +40,7 @@ collection_contains_all_impl (const void *_self, const void *c)
   if (!is_collection (c))
     {
       logger_logf (WARNING, "%O is not a collection.",
-		   class_of (c));
+		   jco_class_of (c));
       return false;
     }
 
@@ -56,13 +56,13 @@ collection_contains_all_impl (const void *_self, const void *c)
       void *item = iterator_next (it);
       if (!collection_contains (_self, item))
 	{
-	  unref (item);
-	  unref (it);
+	  jco_unref (item);
+	  jco_unref (it);
 	  return false;
 	}
-      unref (item);
+      jco_unref (item);
     }
-  unref (it);
+  jco_unref (it);
   return true;
 }
 
@@ -87,14 +87,14 @@ collection_equals_impl (const void *_self, const void *c)
       void *item = iterator_next(it);
       if (collection_count (_self, item) != collection_count (_self, c))
 	{
-	  unref (it);
-	  unref(item);
+	  jco_unref (it);
+	  jco_unref(item);
 	  return false;
 	}
-      unref (item);
+      jco_unref (item);
     }
 
-  unref (it);
+  jco_unref (it);
   return true;
 }
 
@@ -120,23 +120,23 @@ const struct String *
 collection_to_string (const void *_self)
 {
   void *it = collection_iterator (_self);
-  const struct String *ret = new (String, "{");
+  const struct String *ret = jco_new (String, "{");
 
   while (iterator_has_next (it))
     {
-      string_append (ret, unref (iterator_next (it)));
+      string_append (ret, jco_unref (iterator_next (it)));
       if (iterator_has_next (it))
 	string_append (ret, ", ");
     }
   string_append (ret, "}");
-  unref (it);
+  jco_unref (it);
   return ret;
 }
 
 const struct Class *
 collection_content_type (const void *_self)
 {
-  preconditions_check_state (is_collection (_self));
+  jco_preconditions_check_state (is_collection (_self));
   struct Class *(*dft) (const void *) = 0;
   DEFINE_SELECTOR (collection_content_type, dft, _self)
 }

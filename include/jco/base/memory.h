@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 
-void *object_malloc (const size_t size);
-void  object_free (const void *ptr);
-void *object_calloc (const size_t nmemb, const size_t size);
-void *object_realloc (const void *ptr, const size_t size);
+void *jco_malloc (const size_t size);
+void  jco_free (const void *ptr);
+void *jco_calloc (const size_t nmemb, const size_t size);
+void *jco_realloc (const void *ptr, const size_t size);
 
 #endif /* INCLUDE_OBJECT_MEMORY_H_ */

@@ -1,3 +1,26 @@
+/*
+* This file is part of JCO
+*
+* JCO is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* JCO is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with JCO.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file object.c
+ * @author Jake Shilling
+ * @brief Implement functions for working with instances of Object
+ */
+
 #include <object-priv.h>
 
 #include <stdlib.h>
@@ -6,17 +29,14 @@
 #include <jco/jco.h>
 
 void *
-new (const struct Class *class, ...)
+jco_new (struct Class const *const class, ...)
 {
-  if (NULL == class)
-    return NULL;
+  jco_preconditions_check_not_null (class);
 
   struct Object *object;
   va_list ap;
 
-  object = calloc (1, size_of (class));
-  if (NULL == object)
-    return NULL;
+  object = jco_calloc (1, size_of (class));
 
   object->class = class;
   object->magic_number = MAGIC_NUMBER;
@@ -25,39 +45,41 @@ new (const struct Class *class, ...)
   object = construct (object, &ap);
   va_end (ap);
 
-  return ref (object);
+  return jco_ref (object);
 }
 
 void
-delete (void *_self)
+jco_delete (void *const _self)
 {
   if (_self)
-    free (destruct (_self));
+    jco_free (destruct (_self));
 }
 
 const struct Class *
-class_of (const void *_self)
+jco_class_of (void const *const _self)
 {
-  if (NULL == _self || !is_object (_self))
-    return NULL;
+  jco_preconditions_check_not_null (_self);
+  jco_preconditions_check_arg (jco_is_object (_self));
 
   const struct Object *self = _self;
   return self->class;
 }
 
 bool
-is_object (const void *_self)
+jco_is_object (void const *const _self)
 {
   return _self && ((struct Object *)_self)->magic_number == MAGIC_NUMBER;
 }
 
 bool
-is_descendant (const void *_self, const struct Class *class)
+jco_is_descendant (void const *const _self, struct Class const *const class)
 {
-  if (is_object (_self) && NULL != class)
+  jco_preconditions_check_not_null (class);
+
+  if (jco_is_object (_self))
     {
       const struct Object *self = _self;
-      const struct Class *myclass = class_of (self);
+      const struct Class *myclass = jco_class_of (self);
 
       if (class != Object)
         while (myclass != class)
@@ -73,92 +95,79 @@ is_descendant (const void *_self, const struct Class *class)
 }
 
 bool
-is (const void *_self, const struct Class *class)
+jco_is (void const *const _self, struct Class const *const class)
 {
-  return is_object (_self) && class_of (_self) == class;
+  jco_preconditions_check_not_null (class);
+  
+  return jco_is_object (_self) && jco_class_of (_self) == class;
 }
 
 void *
-cast (const void *_self, const struct Class *class)
+jco_cast (void const *const _self, struct Class const *const class)
 {
-  if (NULL == _self)
-    {;
-      logger_log (SEVERE, "Cannot cast a null object.");
-      exit (EXIT_FAILURE);
-    }
-  if (NULL == class)
-    {
-      logger_log (SEVERE, "Cannot cast an object to a null class.");
-      exit (EXIT_FAILURE);
-    }
-  if (!is_descendant (_self, class))
-    {
-      const struct String *msg = new (String, "Cannot cast a ");
-      string_append (msg, unref(to_string (class_of (_self))));
-      string_append (msg, " to a ");
-      string_append (msg, unref(to_string (class)));
-
-      logger_log (SEVERE, msg);
-
-      exit (EXIT_FAILURE);
-    }
-
+  jco_preconditions_check_arg (jco_is_object (_self));
+  jco_preconditions_check_not_null (class);
+  jco_preconditions_check_arg_msg (jco_is_descendant (_self, class),
+				   "Cannot cast a %O to a %O.",
+				   jco_class_of (_self),
+				   class);
   return (void *)_self;
 }
 
 void *
-ref (const void *_self)
+jco_ref (void const *const _self)
 {
-  return (void *)_self;
+  return (void *)_self; // for now this does nothing
 }
 
 void *
-unref (const void *_self)
+jco_unref (void const *const _self)
 {
-  return (void *)_self;
+  return (void *)_self; // for now this does nothing
 }
 
 void *
-object_constructor (void *_self, va_list *app)
+jco_object_constructor (void *_self, va_list *app)
 {
   return _self;
 }
 
 void *
-object_destructor (void *_self)
+jco_object_destructor (void *_self)
 {
   return _self;
 }
 
 bool
-object_equals (const void *_self, const void *o)
+jco_object_equals (const void *_self, const void *o)
 {
   return _self == o;
 }
 
 struct String *
-object_to_string (const void *_self)
+jco_object_to_string (const void *_self)
 {
-  struct Object *self = cast (_self, Object);
-  const struct String *classname = to_string (class_of (self));
+  struct Object *self = jco_cast (_self, Object);
+
+  struct String *classname = to_string (jco_class_of (self));
 
   int len = snprintf (0, 0, "%s@%p",
 		  string_to_cstring (classname),
 		  self);
 
-  char *buf = calloc (1, len + 1);
+  char *buf = jco_calloc (1, len + 1);
   sprintf (buf, "%s@%p",
 		  string_to_cstring (classname),
 		  self);
-  struct String *ret = new (String, buf);
-  free (buf);
-  unref (classname);
+  struct String *ret = jco_new (String, buf);
+  jco_free (buf);
+  jco_unref (classname);
 
   return ret;
 }
 
 int
-object_hash_code (const void *_self)
+jco_object_hash_code (const void *_self)
 {
   return (int) (long) _self;
 }

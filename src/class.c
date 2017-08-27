@@ -51,20 +51,20 @@ next_prime (const unsigned int x)
 const size_t
 size_of (const void *_self)
 {
-  const struct Class *class = cast (_self, Class);
+  const struct Class *class = jco_cast (_self, Class);
   return class->size;
 }
 const struct Class *
 super (const void *_self)
 {
-  const struct Class *class = cast (_self, Class);
+  const struct Class *class = jco_cast (_self, Class);
   return class->super;
 }
 
 Method
 class_get_method (const void *_self, Selector selector)
 {
-  const struct Class *class = cast (_self, Class);
+  const struct Class *class = jco_cast (_self, Class);
 
   if (selector == (Selector) construct)
     return (Method) class->ctor;
@@ -128,9 +128,9 @@ construct (void *_self, va_list *app)
 void *
 super_construct (const struct Class *class, void *_self, va_list *app)
 {
-  preconditions_check_not_null (class);
-  preconditions_check_not_null (class->super);
-  preconditions_check_not_null (class->super->ctor);
+  jco_preconditions_check_not_null (class);
+  jco_preconditions_check_not_null (class->super);
+  jco_preconditions_check_not_null (class->super->ctor);
 
   return class->super->ctor (_self, app);
 }
@@ -145,9 +145,9 @@ destruct (void *_self)
 void *
 super_destruct (const struct Class *class, void *_self)
 {
-  preconditions_check_not_null (class);
-  preconditions_check_not_null (class->super);
-  preconditions_check_not_null (class->super->dtor);
+  jco_preconditions_check_not_null (class);
+  jco_preconditions_check_not_null (class->super);
+  jco_preconditions_check_not_null (class->super->dtor);
 
   return class->super->dtor (_self);
 }
@@ -217,14 +217,14 @@ class_destructor (void *_self)
 struct String *
 class_to_string (const void *_self)
 {
-  struct Class *self = cast (_self, Class);
-  return new (String, self->name);
+  struct Class *self = jco_cast (_self, Class);
+  return jco_new (String, self->name);
 }
 
 void
 class_register_method (const void *_self, Selector selector, Method method)
 {
-  struct Class *self = cast (_self, Class);
+  struct Class *self = jco_cast (_self, Class);
 
   if (selector == (Selector) construct)
     *(Method *) &self->ctor = method;
@@ -279,7 +279,7 @@ class_register_method (const void *_self, Selector selector, Method method)
 struct VTableEntry *
 vtable_entry_create (Selector selector, Method method)
 {
-  struct VTableEntry *ret = object_malloc (sizeof(struct VTableEntry));
+  struct VTableEntry *ret = jco_malloc (sizeof(struct VTableEntry));
   ret->key = selector;
   ret->item = method;
   ret->next = NULL;
@@ -293,7 +293,7 @@ vtable_entry_destroy (struct VTableEntry *self)
   while (self->next)
     vtable_entry_destroy (self->next);
 
-  object_free (self);
+  jco_free (self);
 }
 
 struct VTable *
@@ -301,10 +301,10 @@ vtable_create (unsigned int _size)
 {
   unsigned int size = is_prime (_size) ? _size : next_prime (_size);
 
-  struct VTable *ret = object_malloc (sizeof(struct VTable));
+  struct VTable *ret = jco_malloc (sizeof(struct VTable));
   ret->table_count = 0;
   ret->table_size = size;
-  ret->entries = object_calloc (size, sizeof(struct VTableEntry));
+  ret->entries = jco_calloc (size, sizeof(struct VTableEntry));
 
   return ret;
 }
@@ -316,7 +316,7 @@ vtable_destroy (struct VTable *self)
     if (self->entries[i])
       vtable_entry_destroy (self->entries[i]);
 
-  object_free (self);
+  jco_free (self);
 }
 
 struct VTable *

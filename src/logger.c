@@ -66,7 +66,7 @@ logger_log_cstring (enum LogLevel level, const char * const msg)
   char *timestamp = ctime(&ltime);
   timestamp[strlen (timestamp) - 1] = '\0';
 
-  const struct String *log = new (String, timestamp);
+  const struct String *log = jco_new (String, timestamp);
   string_append (log, ": [");
   string_append (log, (char *)level_info.string);
   string_append (log, "] ");
@@ -152,7 +152,7 @@ logger_log_string (enum LogLevel level, const struct String * const msg)
 static char *
 get_buffer (char *buf, unsigned int size)
 {
-  char *newbuf = object_calloc (size, sizeof(char));
+  char *newbuf = jco_calloc (size, sizeof(char));
   if (NULL != buf)
     {
       snprintf (newbuf, size, "%s", buf);
@@ -190,11 +190,11 @@ logger_logf (enum LogLevel level, const char *fmt, ...)
 		  index++;
 		}
 
-	      unref (str);
+	      jco_unref (str);
 	    }
 	  else
 	    {
-	      struct String *str = new (String, "");
+	      struct String *str = jco_new (String, "");
 	      while (i < strlen (fmt) && fmt[i] != ' ')
 		{
 		  string_append (str, fmt[i]);

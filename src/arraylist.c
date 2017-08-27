@@ -10,10 +10,10 @@ const struct Class *ArrayList = NULL;
 static void
 array_list_grow (struct ArrayList *self)
 {
-  void **arr = object_calloc (self->arr_size + self->growth_rate, sizeof (void *));
+  void **arr = jco_calloc (self->arr_size + self->growth_rate, sizeof (void *));
 
   memcpy (arr, ((struct ImmutableArrayList *)self)->arr, self->arr_size);
-  object_free (((struct ImmutableArrayList *)self)->arr);
+  jco_free (((struct ImmutableArrayList *)self)->arr);
   ((struct ImmutableArrayList *)self)->arr = arr;
 
   self->arr_size += self->growth_rate;
@@ -24,7 +24,7 @@ initArrayList()
 {
   initImmutableArrayList();
   if (!ArrayList)
-    ArrayList = new (Class, "ArrayList", sizeof (struct ArrayList),
+    ArrayList = jco_new (Class, "ArrayList", sizeof (struct ArrayList),
 	construct, array_list_constructor,
 	mutable_collection_add, array_list_add,
 	list_add_at, array_list_add_at,
@@ -37,16 +37,16 @@ initArrayList()
 void
 array_list_set_growth_rate (void *_self, unsigned int rate)
 {
-  preconditions_check_state (rate > 0);
+  jco_preconditions_check_state (rate > 0);
 
-  struct ArrayList *self = cast (_self, ArrayList);
+  struct ArrayList *self = jco_cast (_self, ArrayList);
   self->growth_rate = rate;
 }
 
 unsigned int
 array_list_get_growth_rate (void *_self)
 {
-  struct ArrayList *self = cast (_self, ArrayList);
+  struct ArrayList *self = jco_cast (_self, ArrayList);
   return self->growth_rate;
 }
 
@@ -63,16 +63,16 @@ array_list_constructor (void *_self, va_list *app)
 bool
 array_list_add (const void *_self, const void *o)
 {
-  struct ArrayList *self = cast (_self, ArrayList);
+  struct ArrayList *self = jco_cast (_self, ArrayList);
   struct ImmutableArrayList *super = (struct ImmutableArrayList *)self;
 
-  if (!is_descendant (o, collection_content_type (self)))
+  if (!jco_is_descendant (o, collection_content_type (self)))
     return false;
 
   if (collection_size (self) >= self->arr_size)
     array_list_grow (self);
 
-  super->arr[super->size] = ref (o);
+  super->arr[super->size] = jco_ref (o);
   super->size ++;
 
   return true;
@@ -81,10 +81,10 @@ array_list_add (const void *_self, const void *o)
 bool
 array_list_add_at (const void *_self, const void *o, unsigned int index)
 {
-  struct ArrayList *self = cast (_self, ArrayList);
+  struct ArrayList *self = jco_cast (_self, ArrayList);
   struct ImmutableArrayList *super = (struct ImmutableArrayList *)self;
 
-  if (!is_descendant (o, collection_content_type (self)))
+  if (!jco_is_descendant (o, collection_content_type (self)))
     return false;
 
   if (collection_size (self) >= self->arr_size)
@@ -96,24 +96,24 @@ array_list_add_at (const void *_self, const void *o, unsigned int index)
 	super->arr[i] = super->arr[i-1];
     }
 
-  super->arr[index] = ref (o);
+  super->arr[index] = jco_ref (o);
   return true;
 }
 
 void *
 array_list_set (const void *_self, unsigned int index, const void *o)
 {
-  struct ArrayList *self = cast (_self, ArrayList);
+  struct ArrayList *self = jco_cast (_self, ArrayList);
     struct ImmutableArrayList *super = (struct ImmutableArrayList *)self;
 
-    if (!is_descendant (o, collection_content_type (self)))
+    if (!jco_is_descendant (o, collection_content_type (self)))
       {
-	logger_logf (WARNING, "%O is the wrong type to set into this list.", class_of (o));
+	logger_logf (WARNING, "%O is the wrong type to set into this list.", jco_class_of (o));
 	return NULL;
       }
 
     void * ret = super->arr[index];
-    super->arr[index] = ref (o);
+    super->arr[index] = jco_ref (o);
 
     return ret;
 }
@@ -121,7 +121,7 @@ array_list_set (const void *_self, unsigned int index, const void *o)
 void
 array_list_sort (const void *_self, Comparator comparator)
 {
-  struct ImmutableArrayList *self = cast (_self, ImmutableArrayList);
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
 
   qsort (self->arr, self->size, size_of (self->content_type), comparator);
 }

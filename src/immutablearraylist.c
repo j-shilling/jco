@@ -11,14 +11,14 @@ const struct Class *ArrayListIterator = NULL;
 void initImmutableArrayList()
 {
   if (!ArrayListIterator)
-    ArrayListIterator = new (Class, "ArrayListIterator", Object,
+    ArrayListIterator = jco_new (Class, "ArrayListIterator", Object,
 	sizeof (struct ArrayListIterator),
 	construct, array_list_iterator_constructor,
 	iterator_has_next, array_list_iterator_has_next,
 	iterator_next, array_list_iterator_next,
 	0);
   if (!ImmutableArrayList)
-    ImmutableArrayList = new (Class, "ImmutableArrayList", Object,
+    ImmutableArrayList = jco_new (Class, "ImmutableArrayList", Object,
 	sizeof (struct ImmutableArrayList),
 	construct, immutable_array_list_constructor,
 	destruct, immutable_array_list_destructor,
@@ -42,33 +42,33 @@ immutable_array_list_constructor (void *_self, va_list *app)
 {
   struct ImmutableArrayList *self = super_construct (ImmutableArrayList, _self, app);
   self->content_type = va_arg (*app, const struct Class *);
-  preconditions_check_not_null (self->content_type);
+  jco_preconditions_check_not_null (self->content_type);
   self->size = 0;
   self->arr = NULL;
 
-  void **buf = object_calloc (100, sizeof (void *));
+  void **buf = jco_calloc (100, sizeof (void *));
   unsigned int buf_size = 100;
 
   void *item = 0;
   while ((item = va_arg (*app, void *)))
     {
-      if (is_descendant (item, collection_content_type (self)))
+      if (jco_is_descendant (item, collection_content_type (self)))
 	{
 	  if (self->size >= buf_size)
 	    {
-	      void **newbuf = object_calloc (100 + self->size, sizeof (void *));
-	      memcpy (newbuf, buf, buf_size);
+	      void **jco_newbuf = jco_calloc (100 + self->size, sizeof (void *));
+	      memcpy (jco_newbuf, buf, buf_size);
 
-	      object_free (buf);
-	      buf = newbuf;
+	      jco_free (buf);
+	      buf = jco_newbuf;
 	      buf_size = self->size + 100;
 	    }
 
-	  buf[self->size] = ref (item);
+	  buf[self->size] = jco_ref (item);
 	  self->size ++;
 	}
       else if (is_collection (item)
-	  && is_descendant (collection_content_type (item),
+	  && jco_is_descendant (collection_content_type (item),
 			    collection_content_type (self)))
 	{
 	  void *it = collection_iterator (item);
@@ -77,11 +77,11 @@ immutable_array_list_constructor (void *_self, va_list *app)
 	    {
 	      if (self->size >= buf_size)
 	      	    {
-	      	      void **newbuf = object_calloc (100 + self->size, sizeof (void *));
-	      	      memcpy (newbuf, buf, buf_size);
+	      	      void **jco_newbuf = jco_calloc (100 + self->size, sizeof (void *));
+	      	      memcpy (jco_newbuf, buf, buf_size);
 
-	      	      object_free (buf);
-	      	      buf = newbuf;
+	      	      jco_free (buf);
+	      	      buf = jco_newbuf;
 	      	      buf_size = self->size + 100;
 	      	    }
 
@@ -89,20 +89,20 @@ immutable_array_list_constructor (void *_self, va_list *app)
 	      	  self->size ++;
 	    }
 
-	  unref (it);
+	  jco_unref (it);
 	}
       else
 	{
 	  logger_logf (WARNING, "Cannot add items to this list which are not of type %O",
 		       collection_content_type (self));
-	  object_free (buf);
+	  jco_free (buf);
 	  return self;
 	}
     }
 
-  self->arr = object_calloc (self->size, sizeof (void *));
+  self->arr = jco_calloc (self->size, sizeof (void *));
   memcpy (self->arr, buf, self->size);
-  object_free (buf);
+  jco_free (buf);
 
   return self;
 }
@@ -110,12 +110,12 @@ immutable_array_list_constructor (void *_self, va_list *app)
 void *
 immutable_array_list_destructor (void *_self)
 {
-  struct ImmutableArrayList *self = cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
 
   for (int i = 0; i < self->size; i ++)
-    unref (self->arr[i]);
+    jco_unref (self->arr[i]);
 
-  object_free (self->arr);
+  jco_free (self->arr);
 
   return super_destruct (ImmutableArrayList, self);
 }
@@ -123,45 +123,45 @@ immutable_array_list_destructor (void *_self)
 const struct Class *
 array_list_content_type (const void *_self)
 {
-  struct ImmutableArrayList *self = cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
   return self->content_type;
 }
 
 void *
 array_list_iterator (const void *_self)
 {
-  return new (ArrayListIterator, _self);
+  return jco_new (ArrayListIterator, _self);
 }
 
 unsigned int
 array_list_size (const void *_self)
 {
-  struct ImmutableArrayList *self = cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
   return self->size;
 }
 
 void *
 array_list_get (const void *_self, unsigned int index)
 {
-  struct ImmutableArrayList *self = cast (ImmutableArrayList, _self);
-  return ref(self->arr[index]);
+  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
+  return jco_ref(self->arr[index]);
 }
 
 void *
 array_list_sublist (const void *_self, unsigned int start, unsigned int end)
 {
-  struct ImmutableArrayList *self = cast (_self, ImmutableArrayList);
-  struct ImmutableArrayList *buf = new (ImmutableArrayList, collection_content_type (self), 0);
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
+  struct ImmutableArrayList *buf = jco_new (ImmutableArrayList, collection_content_type (self), 0);
 
   int size = (end - start) + 1;
-  void **arr = object_calloc (size, sizeof (void *));
+  void **arr = jco_calloc (size, sizeof (void *));
   memcpy (arr, self->arr + start, size);
 
   buf->arr = arr;
   buf->size = size;
 
-  void *ret = new (class_of (_self), collection_content_type (self), buf, 0);
-  unref (buf);
+  void *ret = jco_new (jco_class_of (_self), collection_content_type (self), buf, 0);
+  jco_unref (buf);
 
   return ret;
 }
@@ -171,7 +171,7 @@ array_list_iterator_constructor (void *_self, va_list *app)
 {
   struct ArrayListIterator *self = super_construct (ArrayListIterator, _self, app);
   struct ImmutableArrayList *list =
-      cast (ImmutableArrayList, va_arg (*app, void *));
+      jco_cast (ImmutableArrayList, va_arg (*app, void *));
 
   self->arr = list->arr;
   self->size = list->size;
@@ -183,16 +183,16 @@ array_list_iterator_constructor (void *_self, va_list *app)
 bool
 array_list_iterator_has_next (const void *_self)
 {
-  struct ArrayListIterator *self = cast (_self, ArrayListIterator);
+  struct ArrayListIterator *self = jco_cast (_self, ArrayListIterator);
   return self->cur < self->size;
 }
 
 void *
 array_list_iterator_next (const void *_self)
 {
-  struct ArrayListIterator *self = cast (_self, ArrayListIterator);
+  struct ArrayListIterator *self = jco_cast (_self, ArrayListIterator);
 
-  void *ret = ref (self->arr[self->cur]);
+  void *ret = jco_ref (self->arr[self->cur]);
   self->cur ++;
   return ret;
 }

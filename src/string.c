@@ -14,7 +14,7 @@ void
 initString()
 {
   if (NULL == String)
-    String = new (Class, "String", Object, sizeof(struct String),
+    String = jco_new (Class, "String", Object, sizeof(struct String),
 	construct, string_constructor,
 	destruct, string_destructor,
 	equals, string_equals,
@@ -26,33 +26,33 @@ initString()
 const char *
 string_to_cstring (const void *_self)
 {
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
   return self->text;
 }
 
 void
 string_append_char (const void *_self, char ch)
 {
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
 
   int len = string_length (self) + 1;
-  char *newtext = object_calloc (len + 1, sizeof (char));
+  char *newtext = jco_calloc (len + 1, sizeof (char));
   strcpy (newtext, self->text);
   newtext[len - 1] = ch;
 
-  object_free (self->text);
+  jco_free (self->text);
   self->text = newtext;
 }
 
 void
 string_append_cstring (const void *_self, char *str)
 {
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
   if (NULL == str)
     str = "";
 
   int len = snprintf (0, 0, "%s%s", self->text, str);
-  char *newtext = object_calloc (len + 1, sizeof (char));
+  char *newtext = jco_calloc (len + 1, sizeof (char));
   sprintf (newtext, "%s%s", self->text, str);
 
   if (self->text)
@@ -65,10 +65,10 @@ string_append_cstring (const void *_self, char *str)
 void
 string_append_object (const void *_self, void *o)
 {
-  const struct String *self = cast (_self, String);
+  const struct String *self = jco_cast (_self, String);
   const struct String *str = to_string (o);
   string_append_cstring (self, (char *)string_to_cstring (str));
-  unref (str);
+  jco_unref (str);
 }
 
 bool
@@ -85,7 +85,7 @@ string_ends_with_cstring (const void *_self, char *str)
       return false;
     }
 
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
   int mylen = string_length (self);
   int yourlen = strlen (str);
   if (yourlen > mylen)
@@ -113,14 +113,14 @@ string_ends_with_object (const void *_self, void *o)
 unsigned int
 string_length(const void *_self)
 {
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
   return strlen (self->text);
 }
 
 char
 string_char_at (const void *_self, unsigned int index)
 {
-  const struct String *self = cast (_self, String);
+  const struct String *self = jco_cast (_self, String);
 
   if (index >= string_length (self))
     return '\0';
@@ -134,7 +134,7 @@ string_constructor (void *_self, va_list *app)
   struct String *self = _self;
   char *arg = va_arg (*app, char *);
 
-  self->text = object_calloc (strlen (arg) + 1, sizeof (char));
+  self->text = jco_calloc (strlen (arg) + 1, sizeof (char));
   strcpy ((char *)self->text, arg);
 
   return self;
@@ -143,10 +143,10 @@ string_constructor (void *_self, va_list *app)
 void *
 string_destructor (void *_self)
 {
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
 
   if (self->text)
-    object_free ((void *)self->text);
+    jco_free ((void *)self->text);
 
   return self;
 }
@@ -157,10 +157,10 @@ string_equals (const void *_self, const void *o)
   if (NULL == o)
     return _self == NULL;
 
-  struct String *self = cast (_self, String);
+  struct String *self = jco_cast (_self, String);
 
   return 0 == strcmp (self->text,
-		      is_descendant (o, String) ?
+		      jco_is_descendant (o, String) ?
 			  ((struct String *)o)->text :
 			  (const char *) o);
 }
@@ -168,7 +168,7 @@ string_equals (const void *_self, const void *o)
 struct String *
 string_to_string (const void *_self)
 {
-  return cast (_self, String);
+  return jco_cast (_self, String);
 }
 
 int
