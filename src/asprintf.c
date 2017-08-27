@@ -15,23 +15,36 @@
 * along with JCO.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * @file jco.h
- * @author Jake Shilling
- * @brief Main header for libjco
- *
- * This is a convenience header to include all the necessary
- * declarations to run the main features of this library.
- */
+#include <config.h>
 
-#ifndef __JCO_H__
-#define __JCO_H__
+#ifndef HAVE_APSRINTF
 
-#include <jco/base/class.h>
-#include <jco/base/logger.h>
-#include <jco/base/preconditions.h>
-#include <jco/base/memory.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stddef.h>
 
-#include <jco/api/string.h>
+int
+asprintf (char ** restrict __ptr,
+          const char * restrict __fmt, ...)
+{
+  int size = 0;
+  va_list args;
 
-#endif /* __JCO_H__ */
+  va_start (args, __fmt);
+
+  size = vsnprintf (NULL, size, __fmt, args);
+
+  if (size < 0) { return -1; }
+
+  *__ptr = (char *) malloc (size + 1);
+
+  if (__ptr == NULL) { return -1; }
+
+  size = vsprintf (*__ptr, __fmt, args);
+
+  va_end (args);
+  return size;
+}
+
+#endif /* HAVE_APSRINTF */

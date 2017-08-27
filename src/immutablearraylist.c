@@ -93,7 +93,7 @@ immutable_array_list_constructor (void *_self, va_list *app)
 	}
       else
 	{
-	  logger_logf (WARNING, "Cannot add items to this list which are not of type %O",
+	  jco_log (WARNING, "Cannot add items to this list which are not of type %O",
 		       collection_content_type (self));
 	  jco_free (buf);
 	  return self;

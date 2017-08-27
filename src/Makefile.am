@@ -10,5 +10,7 @@ libjco_la_SOURCES = object.c \
 		       mutablecollection.c \
 		       list.c \
 		       immutablearraylist.c \
-		       arraylist.c
+		       arraylist.c \
+		       parsefmt.c \
+		       asprintf.c
 libjco_la_CFLAGS = ${CFLAGS} -I. -I../include

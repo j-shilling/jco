@@ -108,7 +108,7 @@ array_list_set (const void *_self, unsigned int index, const void *o)
 
     if (!jco_is_descendant (o, collection_content_type (self)))
       {
-	logger_logf (WARNING, "%O is the wrong type to set into this list.", jco_class_of (o));
+	jco_log (WARNING, "%O is the wrong type to set into this list.", jco_class_of (o));
 	return NULL;
       }
 

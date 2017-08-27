@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include <jco/jco.h>
+#include <jco/util/parsefmt.h>
 
 const struct Class * String = NULL;
 
@@ -81,7 +82,7 @@ string_ends_with_cstring (const void *_self, char *str)
 {
   if (NULL == str)
     {
-      logger_log (WARNING, "Testing to see if a string ends with NULL.");
+      jco_log (WARNING, "Testing to see if a string ends with NULL.");
       return false;
     }
 
@@ -132,10 +133,14 @@ void *
 string_constructor (void *_self, va_list *app)
 {
   struct String *self = _self;
-  char *arg = va_arg (*app, char *);
 
-  self->text = jco_calloc (strlen (arg) + 1, sizeof (char));
-  strcpy ((char *)self->text, arg);
+  const char *fmt = va_arg (*app, const char *);
+  char *buf = NULL;
+  parsefmt (&buf, fmt ? fmt : "", *app);
+
+  self->text = jco_calloc (strlen (buf) + 1, sizeof (char));
+  strcpy ((char *)self->text, buf);
+  free (buf);
 
   return self;
 }

@@ -16,22 +16,25 @@
 */
 
 /**
- * @file jco.h
+ * @file parsefmt.h
  * @author Jake Shilling
- * @brief Main header for libjco
- *
- * This is a convenience header to include all the necessary
- * declarations to run the main features of this library.
+ * @breif Define functions to parse printf-style format strings
  */
 
-#ifndef __JCO_H__
-#define __JCO_H__
+#include <stdarg.h>
+#include <stddef.h>
 
-#include <jco/base/class.h>
-#include <jco/base/logger.h>
-#include <jco/base/preconditions.h>
-#include <jco/base/memory.h>
-
-#include <jco/api/string.h>
-
-#endif /* __JCO_H__ */
+/**
+ * @brief Parse a printf format string, with the added functuality of
+ *	  using %O to convert a jco object to a string.
+ *
+ * @param buf	  A pointer to where the resulting string should go. New
+ *		  memory will be allocated with jco_malloc and must be
+ *		  freed.
+ * @param fmt	  The format string
+ * @param ap	  A list of arguments to be added to the string.
+ * @returns	  The size of the allocated memory
+ */
+size_t parsefmt (char **const restrict buf,
+	      char const *const restrict fmt,
+	      va_list ap);

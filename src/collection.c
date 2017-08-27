@@ -39,14 +39,14 @@ collection_contains_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
     {
-      logger_logf (WARNING, "%O is not a collection.",
+      jco_log (WARNING, "%O is not a collection.",
 		   jco_class_of (c));
       return false;
     }
 
   if (collection_is_empty (c))
     {
-      logger_log (WARNING, "Checking whether this contains all of an empty collection.");
+      jco_log (WARNING, "Checking whether this contains all of an empty collection.");
       return true;
     }
 

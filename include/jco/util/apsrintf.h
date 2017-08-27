@@ -16,22 +16,10 @@
 */
 
 /**
- * @file jco.h
+ * @file asprintf.h
  * @author Jake Shilling
- * @brief Main header for libjco
- *
- * This is a convenience header to include all the necessary
- * declarations to run the main features of this library.
+ * @brief declares asprintf
  */
 
-#ifndef __JCO_H__
-#define __JCO_H__
-
-#include <jco/base/class.h>
-#include <jco/base/logger.h>
-#include <jco/base/preconditions.h>
-#include <jco/base/memory.h>
-
-#include <jco/api/string.h>
-
-#endif /* __JCO_H__ */
+int asprintf (char ** restrict  __ptr,
+	      const char * restrict __fmt, ...);

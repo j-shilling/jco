@@ -6,7 +6,7 @@ mutable_collection_add_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
     {
-      logger_logf (WARNING, "%O is not a collection.", jco_class_of (c));
+      jco_log (WARNING, "%O is not a collection.", jco_class_of (c));
       return false;
     }
 
@@ -24,7 +24,7 @@ mutable_collection_remove_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
       {
-        logger_logf (WARNING, "%O is not a collection.", jco_class_of (c));
+        jco_log (WARNING, "%O is not a collection.", jco_class_of (c));
         return false;
       }
 
@@ -42,7 +42,7 @@ mutable_collection_retain_all_impl (const void *_self, const void *c)
 {
   if (!is_collection (c))
       {
-        logger_logf (WARNING, "%O is not a collection.", jco_class_of (c));
+        jco_log (WARNING, "%O is not a collection.", jco_class_of (c));
         return false;
       }
 

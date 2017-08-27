@@ -190,7 +190,7 @@ class_constructor (void *_self, va_list *app)
 
   if (NULL == self->super)
     {
-      logger_logf (SEVERE, "%O does not have a super class", self);
+      jco_log (SEVERE, "%O does not have a super class", self);
       exit (EXIT_FAILURE);
     }
 

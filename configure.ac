@@ -2,11 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libobject], [0.1], [shilling.jake@gmail.com])
+AC_INIT([libjco], [0.1], [shilling.jake@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror subdir-objects])
 
 AC_CONFIG_SRCDIR([include/jco/jco.h])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([src/config.h])
 
 # Checks for programs.
 AC_PROG_CC
@@ -25,6 +25,7 @@ AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
+AC_CHECK_FUNCS([asprintf])
 
 AC_OUTPUT([Makefile
 	   src/Makefile

@@ -1,15 +1,34 @@
+/*
+* This file is part of JCO
+*
+* JCO is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* JCO is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with JCO.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file logger.h
+ * @author Jake Shilling
+ * @brief Declares functions for logging
+ */
+
 #ifndef INCLUDE_OBJECT_LOGGER_H_
 #define INCLUDE_OBJECT_LOGGER_H_
 
-#include <jco/api/string.h>
-
-#define logger_log(x, y) _Generic ((y), \
-				    char *: logger_log_cstring, \
-			      const char *: logger_log_cstring, \
-		         const char *const: logger_log_cstring, \
-			   struct String *: logger_log_string, \
-		     const struct String *: logger_log_string, \
-		const struct String *const: logger_log_string) (x, y)
+#define jco_log(x, ...)							    \
+  _Generic ((x),							    \
+	    enum LogLevel: jco_logger_log,				    \
+		      int: jco_logger_log,				    \
+		  default: jco_logger_log_default_level) (x, ##__VA_ARGS__)
 
 enum LogLevel
 {
@@ -24,8 +43,7 @@ enum LogLevel
   N_LEVELS
 };
 
-void logger_log_cstring (enum LogLevel level, const char *const msg);
-void logger_log_string (enum LogLevel level, const struct String *const msg);
-void logger_logf (enum LogLevel level, const char *fmt, ...);
+void jco_logger_log (enum LogLevel level, char const *const restrict fmt, ...);
+void jco_logger_log_default_level (char const *const restrict fmt, ...);
 
 #endif /* INCLUDE_OBJECT_LOGGER_H_ */

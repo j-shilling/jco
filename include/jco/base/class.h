@@ -12,7 +12,7 @@
       const struct Class *class = jco_class_of (_self); 				\
       if (!class) 								\
 	{									\
-	  logger_log (SEVERE, "This object does not have a class.");		\
+	  jco_log (SEVERE, "This object does not have a class.");		\
 	  exit (EXIT_FAILURE);							\
 	}									\
       *(Method *)&default_method = 						\
@@ -20,7 +20,7 @@
 	class_get_method (class, (Selector) name) : (Method) default_method;	\
       if (!default_method)							\
 	{									\
-	  logger_logf (SEVERE, "%O does not implement " #name, class);		\
+	  jco_log (SEVERE, "%O does not implement " #name, class);		\
 	  exit (EXIT_FAILURE);							\
 	}									\
       return default_method (_self, ##__VA_ARGS__);
