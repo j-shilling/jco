@@ -19,6 +19,35 @@ START_TEST (check_jco_new_string)
 }
 END_TEST
 
+START_TEST (check_jco_new_string_null_fmt)
+{
+  void *str = jco_new (String, 0);
+
+  ck_assert_ptr_ne (str, 0);
+  ck_assert_int_eq (0, strcmp ("", string_to_cstring (str)));
+  ck_assert_int_eq (0, string_length (str));
+
+  jco_unref (str);
+}
+END_TEST
+
+START_TEST (check_jco_new_string_complex)
+{
+  for (int i = 0; i < 100; i ++)
+    {
+      void *str = jco_new (String, "%d:%s", i, test);
+      char *cmp = NULL;
+      asprintf (&cmp, "%d:%s", i, test);
+
+      ck_assert_ptr_ne (str, 0);
+      ck_assert_int_eq (0, strcmp (cmp, string_to_cstring (str)));
+
+      jco_unref (str);
+      free(cmp);
+    }
+}
+END_TEST
+
 START_TEST (check_equals)
 {
   void *str = jco_new (String, test);
@@ -83,21 +112,68 @@ START_TEST (check_ends_with_char)
 }
 END_TEST
 
-Suite *
-string_suite()
+START_TEST (check_append_char)
+{
+  void *str = jco_new (String, "abc");
+  string_append (str, 'd');
+
+  ck_assert_int_eq (0, strcmp ("abcd", string_to_cstring (str)));
+
+  jco_unref (str);
+}
+END_TEST
+
+START_TEST (check_append_cstring)
+{
+  void *str = jco_new (String, "abc");
+  string_append (str, "def");
+
+  ck_assert_int_eq (0, strcmp ("abcdef", string_to_cstring (str)));
+
+  jco_unref (str);
+}
+END_TEST
+
+START_TEST (check_append_object)
+{
+  void *str = jco_new (String, "abc");
+  void *str2 = jco_new (String, "def");
+  string_append (str, str2);
+
+  ck_assert_int_eq (0, strcmp ("abcdef", string_to_cstring (str)));
+
+  jco_unref (str);
+}
+END_TEST
+
+
+int
+main (void)
 {
   initString();
-
   Suite *s = suite_create ("String");
   TCase *tc = tcase_create ("Core");
 
   tcase_add_test (tc, check_jco_new_string);
+  tcase_add_test (tc, check_jco_new_string_null_fmt);
+  tcase_add_test (tc, check_jco_new_string_complex);
   tcase_add_test (tc, check_equals);
   tcase_add_test (tc, check_char_at);
   tcase_add_test (tc, check_ends_with_cstring);
   tcase_add_test (tc, check_ends_with_string);
   tcase_add_test (tc, check_ends_with_char);
+  tcase_add_test (tc, check_append_char);
+  tcase_add_test (tc, check_append_cstring);
+  tcase_add_test (tc, check_append_object);
 
   suite_add_tcase (s, tc);
-  return s;
+
+  SRunner *sr = srunner_create (s);
+
+  srunner_set_fork_status (sr, CK_NOFORK);
+  srunner_run_all (sr, CK_VERBOSE);
+  int number_failed = srunner_ntests_failed (sr);
+  srunner_free (sr);
+
+  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

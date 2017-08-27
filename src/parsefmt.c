@@ -1,9 +1,10 @@
 #include <jco/util/parsefmt.h>
-#include <jco/util/apsrintf.h>
+#include <jco/util/asprintf.h>
 #include <jco/jco.h>
 
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 struct buf
 {
@@ -40,11 +41,15 @@ parsefmt (char **const restrict buf,
 {
   struct buf b = { jco_calloc (10, 1), 0, 10 };
 
-  for (int i = 0; i < strlen (fmt) - 1; i++)
+  for (int i = 0; i < strlen (fmt); i++)
     {
       if (fmt[i] == '%')
 	{
-	  if (fmt[i + 1] == 'O')
+	  if ((i + 1) >= strlen (fmt))
+	    {
+	      add_char_to_buf (&b, fmt[i]);
+	    }
+	  else if (fmt[i + 1] == 'O')
 	    {
 	      void *str = to_string(va_arg (ap, void *));
 	      add_string_to_buf (&b, string_to_cstring (str));
@@ -53,13 +58,48 @@ parsefmt (char **const restrict buf,
 	  else
 	    {
 	      struct buf s = { jco_calloc (10, 1), 0, 10 };
-	      for (int j = i+1; j < strlen (fmt) && j != ' '; j++)
-		add_char_to_buf (&s, fmt[j]);
+	      add_char_to_buf (&s, fmt[i]);
+	      for (int j = i+1; j < strlen (fmt); j++)
+		{
+		  add_char_to_buf (&s, fmt[j]);
+		  if (isspace (fmt[j])
+		      || fmt[j] == 'd'
+		      || fmt[j] == 'i'
+		      || fmt[j] == 'o'
+		      || fmt[j] == 'u'
+		      || fmt[j] == 'x'
+		      || fmt[j] == 'X'
+		      || fmt[j] == 'e'
+		      || fmt[j] == 'E'
+		      || fmt[j] == 'f'
+		      || fmt[j] == 'F'
+		      || fmt[j] == 'g'
+		      || fmt[j] == 'G'
+		      || fmt[j] == 'a'
+		      || fmt[j] == 'c'
+		      || fmt[j] == 's'
+		      || fmt[j] == 'C'
+		      || fmt[j] == 'S'
+		      || fmt[j] == 'p'
+		      || fmt[j] == 'n'
+		      || fmt[j] == 'm'
+		      || fmt[j] == '%')
+		    {
+		      break;
+		    }
+		}
 
-	      char *sl = NULL;
-	      asprintf (&sl, s.buf, ap);
+	      i += strlen (s.buf)-1;
+
+	      va_list temp;
+	      va_copy (temp, ap);
+
+	      char *sl = jco_malloc (vsnprintf (0, 0, s.buf, temp));
+	      vsprintf (sl, s.buf, ap);
+
 	      add_string_to_buf (&b, sl);
-	      free (sl);
+
+	      jco_free (sl);
 	    }
 	}
       else
@@ -67,9 +107,8 @@ parsefmt (char **const restrict buf,
 	  add_char_to_buf (&b, fmt[i]);
 	}
     }
-  add_char_to_buf (&b, fmt[strlen(fmt)+1]);
 
-  *buf = jco_malloc (b.len);
+  *buf = jco_calloc (b.len + 1, 1);
   strcpy (*buf, b.buf);
   jco_free (b.buf);
 }

@@ -17,7 +17,7 @@
 
 #include <config.h>
 
-#ifndef HAVE_APSRINTF
+#ifndef HAVE_ASPRINTF
 
 #include <stdlib.h>
 #include <stdarg.h>

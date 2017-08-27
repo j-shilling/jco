@@ -1,8 +1,13 @@
-TESTS = check_jco
-check_PROGRAMS = check_jco
+TESTS = check_logger check_string
+check_PROGRAMS = check_logger check_string
 
-check_jco_SOURCES = check_object.c \
-						string.c
+check_logger_SOURCES = check_logger.c
 
-check_jco_CFLAGS = @CHECK_CFLAGS@ -I$(srcdir)/../include
-check_jco_LDADD = @CHECK_LIBS@ $(srcdir)/../src/libjco.la
+check_logger_CFLAGS = @CHECK_CFLAGS@ -I$(srcdir)/../include
+check_logger_LDADD = @CHECK_LIBS@ $(srcdir)/../src/libjco.la
+
+check_string_SOURCES = check_string.c
+
+check_string_CFLAGS = @CHECK_CFLAGS@ -I$(srcdir)/../include
+check_string_LDADD = @CHECK_LIBS@ $(srcdir)/../src/libjco.la
+
