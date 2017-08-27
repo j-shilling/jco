@@ -159,7 +159,7 @@ list_add_all_at (const void *_self, const void *c, unsigned int index)
 void *
 list_get (const void *_self, unsigned int index)
 {
-  jco_preconditions_check_state (is_mutable_list (_self));
+  jco_preconditions_check_state (is_list (_self));
   jco_preconditions_check_index (index, collection_size (_self));
 
   void *(*dft) (const void *, unsigned int) = 0;

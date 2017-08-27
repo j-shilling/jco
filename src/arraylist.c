@@ -24,13 +24,14 @@ initArrayList()
 {
   initImmutableArrayList();
   if (!ArrayList)
-    ArrayList = jco_new (Class, "ArrayList", sizeof (struct ArrayList),
-	construct, array_list_constructor,
-	mutable_collection_add, array_list_add,
-	list_add_at, array_list_add_at,
-	list_set, array_list_set,
-	list_sort, array_list_sort,
-	0);
+    ArrayList = jco_new (Class, "ArrayList", ImmutableArrayList,
+			 sizeof (struct ArrayList),
+			construct, array_list_constructor,
+			mutable_collection_add, array_list_add,
+			list_add_at, array_list_add_at,
+			list_set, array_list_set,
+			list_sort, array_list_sort,
+			0);
 
 }
 

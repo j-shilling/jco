@@ -54,6 +54,8 @@ parsefmt (char **const restrict buf,
 	      void *str = to_string(va_arg (ap, void *));
 	      add_string_to_buf (&b, string_to_cstring (str));
 	      jco_unref (str);
+
+	      i++;
 	    }
 	  else
 	    {

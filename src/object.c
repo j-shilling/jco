@@ -78,8 +78,16 @@ jco_is_descendant (void const *const _self, struct Class const *const class)
 
   if (jco_is_object (_self))
     {
-      const struct Object *self = _self;
-      const struct Class *myclass = jco_class_of (self);
+      const struct Class *myclass = NULL;
+
+      if (class != Class && jco_is_descendant (_self, Class))
+	{
+	  myclass = jco_cast (_self, Class);
+	}
+      else
+	{
+	  myclass = jco_class_of (_self);
+	}
 
       if (class != Object)
         while (myclass != class)

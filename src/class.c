@@ -64,7 +64,8 @@ super (const void *_self)
 Method
 class_get_method (const void *_self, Selector selector)
 {
-  const struct Class *class = jco_cast (_self, Class);
+  const struct Class *class = jco_is_descendant (_self, Class) ?
+    jco_cast (_self, Class) : jco_class_of (_self);
 
   if (selector == (Selector) construct)
     return (Method) class->ctor;
@@ -290,7 +291,7 @@ vtable_entry_create (Selector selector, Method method)
 void
 vtable_entry_destroy (struct VTableEntry *self)
 {
-  while (self->next)
+  if (self->next)
     vtable_entry_destroy (self->next);
 
   jco_free (self);

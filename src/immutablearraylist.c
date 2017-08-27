@@ -57,7 +57,7 @@ immutable_array_list_constructor (void *_self, va_list *app)
 	  if (self->size >= buf_size)
 	    {
 	      void **jco_newbuf = jco_calloc (100 + self->size, sizeof (void *));
-	      memcpy (jco_newbuf, buf, buf_size);
+	      memcpy (jco_newbuf, buf, buf_size * sizeof (void *));
 
 	      jco_free (buf);
 	      buf = jco_newbuf;
@@ -78,7 +78,7 @@ immutable_array_list_constructor (void *_self, va_list *app)
 	      if (self->size >= buf_size)
 	      	    {
 	      	      void **jco_newbuf = jco_calloc (100 + self->size, sizeof (void *));
-	      	      memcpy (jco_newbuf, buf, buf_size);
+	      	      memcpy (jco_newbuf, buf, buf_size * sizeof (void *));
 
 	      	      jco_free (buf);
 	      	      buf = jco_newbuf;
@@ -101,7 +101,7 @@ immutable_array_list_constructor (void *_self, va_list *app)
     }
 
   self->arr = jco_calloc (self->size, sizeof (void *));
-  memcpy (self->arr, buf, self->size);
+  memcpy (self->arr, buf, self->size * sizeof (void *));
   jco_free (buf);
 
   return self;
@@ -110,7 +110,7 @@ immutable_array_list_constructor (void *_self, va_list *app)
 void *
 immutable_array_list_destructor (void *_self)
 {
-  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
 
   for (int i = 0; i < self->size; i ++)
     jco_unref (self->arr[i]);
@@ -123,7 +123,7 @@ immutable_array_list_destructor (void *_self)
 const struct Class *
 array_list_content_type (const void *_self)
 {
-  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
   return self->content_type;
 }
 
@@ -136,14 +136,14 @@ array_list_iterator (const void *_self)
 unsigned int
 array_list_size (const void *_self)
 {
-  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
   return self->size;
 }
 
 void *
 array_list_get (const void *_self, unsigned int index)
 {
-  struct ImmutableArrayList *self = jco_cast (ImmutableArrayList, _self);
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
   return jco_ref(self->arr[index]);
 }
 
@@ -171,7 +171,7 @@ array_list_iterator_constructor (void *_self, va_list *app)
 {
   struct ArrayListIterator *self = super_construct (ArrayListIterator, _self, app);
   struct ImmutableArrayList *list =
-      jco_cast (ImmutableArrayList, va_arg (*app, void *));
+      jco_cast (va_arg (*app, void *), ImmutableArrayList);
 
   self->arr = list->arr;
   self->size = list->size;
