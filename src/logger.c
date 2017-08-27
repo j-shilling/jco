@@ -7,6 +7,7 @@
 
 #include <jco/jco.h>
 #include <jco/util/parsefmt.h>
+#include <jco/util/apsrintf.h>
 
 static struct
 {
@@ -49,13 +50,13 @@ static const struct LogLevelInfo levels_table[] =
 static void
 logger_log_cstring (enum LogLevel level, const char * const msg)
 {
+  if (level < logger.level)
+    return;
+
   if (out == NULL)
     out = stdout;
   if (err == NULL)
     err = stderr;
-
-  if (level < logger.level)
-    return;
 
   const struct LogLevelInfo level_info = levels_table[level];
 
@@ -63,17 +64,17 @@ logger_log_cstring (enum LogLevel level, const char * const msg)
   char *timestamp = ctime(&ltime);
   timestamp[strlen (timestamp) - 1] = '\0';
 
-  const struct String *log = jco_new (String, timestamp);
-  string_append (log, ": [");
-  string_append (log, (char *)level_info.string);
-  string_append (log, "] ");
-  string_append (log, (char *)msg);
+  char *log = NULL;
+  char *file_err_msg = NULL;
 
-  if (!string_ends_with (log, "\n"))
-  string_append (log, "\n");
+  {
+    int i = asprintf (&log, "%s: [%s] %s\n", timestamp, level_info.string, msg);
+    if (log[i - 2] == '\n')
+      log[i - 1] = '\0';
+  }
 
   if (logger.print_to_term)
-    fprintf (*level_info.term_file, "%s", string_to_cstring (log));
+    fprintf (*level_info.term_file, "%s", log);
 
   if (logger.print_to_file)
     {
@@ -97,28 +98,28 @@ logger_log_cstring (enum LogLevel level, const char * const msg)
 	{
 	  logger.print_to_file = false;
 
-	  int msg_size = snprintf (NULL, 0, "Could not open %s; %s.",
-				   *level_info.log_file, strerror (errno));
-	  char *file_err_msg = calloc (msg_size + 1, sizeof(char));
-	  sprintf (file_err_msg, "Could not open %s; %s.", *level_info.log_file,
+	  char *file_err_msg = NULL;
+	  asprintf (&file_err_msg, "Could not open %s; %s.", *level_info.log_file,
 		   strerror (errno));
 
 	  logger_log_cstring (SEVERE, file_err_msg);
 	  logger.print_to_file = true;
+
+	  goto cleanup;
 	}
 
       if (0 > fprintf (logfile, "%s", string_to_cstring (log)))
 	{
 	  logger.print_to_file = false;
 
-	  int msg_size = snprintf (NULL, 0, "Could not write to %s.",
-				   *level_info.log_file);
-	  char *file_err_msg = calloc (msg_size + 1, sizeof(char));
-	  sprintf (file_err_msg, "Could not write to %s.",
+	  char *file_err_msg = NULL;
+	  asprintf (&file_err_msg, "Could not write to %s.",
 		   *level_info.log_file);
 
 	  logger_log_cstring (SEVERE, file_err_msg);
 	  logger.print_to_file = true;
+
+	  goto cleanup;
 	}
 
       if (NULL != logfile)
@@ -127,23 +128,29 @@ logger_log_cstring (enum LogLevel level, const char * const msg)
 	    {
 	      logger.print_to_file = false;
 
-	      int msg_size = snprintf (NULL, 0, "Could not close %s; %s.",
-				       *level_info.log_file, strerror (errno));
-	      char *file_err_msg = calloc (msg_size + 1, sizeof(char));
-	      sprintf (file_err_msg, "Could not close %s; %s.",
+	      char *file_err_msg = NULL;
+	      asprintf (&file_err_msg, "Could not close %s; %s.",
 		       *level_info.log_file, strerror (errno));
 
 	      logger_log_cstring (SEVERE, file_err_msg);
 	      logger.print_to_file = true;
+
+	      goto cleanup;
 	    }
 	}
     }
+
+cleanup:
+  if (log) free (log);
+  if (file_err_msg) free (file_err_msg);
+
+  return;
 }
 
-static void
+static void 
 jco_vlog (enum LogLevel const level,
-	  char const *const restrict fmt,
-	  va_list ap)
+	       char const *const restrict fmt,
+	       va_list ap)
 {
   char *msg = NULL;
   parsefmt (&msg, fmt, ap);
@@ -158,8 +165,6 @@ jco_logger_log (enum LogLevel const level,
 {
   va_list args;
   va_start(args, fmt);
-
-  jco_vlog (level, fmt, args);
 
   va_end (args);
 }
