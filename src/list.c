@@ -29,7 +29,7 @@ list_index_of_impl (const void *_self, const void *o)
 {
   int size = collection_size (_self);
   for (int i = 0; i < size; i++)
-    if (equals (o, jco_unref (list_get (_self, i))))
+    if (jco_equals (o, jco_unref (list_get (_self, i))))
       return i;
 
   return -1;
@@ -39,7 +39,7 @@ static int
 list_last_index_of_impl (const void *_self, const void *o)
 {
     for (int i = collection_size (_self) - 1; i >= 0; i--)
-      if (equals (o, jco_unref (list_get (_self, i))))
+      if (jco_equals (o, jco_unref (list_get (_self, i))))
         return i;
 
     return -1;
@@ -114,7 +114,7 @@ is_list (const void *_self)
 {
   return _self
       && is_collection (_self)
-      && class_implements_method (_self, (Selector) list_get);
+      && jco_class_implements_method (_self, (Selector) list_get);
 }
 
 bool
@@ -122,7 +122,7 @@ is_mutable_list (const void *_self)
 {
   return is_list (_self)
       && is_mutable_collection (_self)
-      && class_implements_all (_self, list_set, list_add_at);
+      && jco_class_implements_all (_self, list_set, list_add_at);
 }
 
 bool
@@ -130,7 +130,7 @@ is_immutable_list (const void *_self)
 {
   return is_list (_self)
         && !is_mutable_collection (_self)
-        && !class_implements_method (_self, (Selector) list_set);
+        && !jco_class_implements_method (_self, (Selector) list_set);
 }
 
 void
@@ -242,7 +242,7 @@ list_equals (const void *_self, const void *o)
     return false;
 
   for (int i = 0; i < size; i++)
-    if (!equals(jco_unref(list_get(_self, i)), jco_unref(list_get (o, i))))
+    if (!jco_equals(jco_unref(list_get(_self, i)), jco_unref(list_get (o, i))))
 	return false;
 
   return true;
@@ -257,7 +257,7 @@ list_hash_code (const void *_self)
   while (iterator_has_next (it))
     {
       void *item = iterator_next(it);
-      ret = (31*ret) + (item == NULL ? 0 : hash_code (item));
+      ret = (31*ret) + (item == NULL ? 0 : jco_hash_code (item));
       jco_unref (item);
     }
   jco_unref (it);

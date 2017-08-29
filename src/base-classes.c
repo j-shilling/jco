@@ -21,7 +21,7 @@ static const struct Class object[] =
 	  MAGIC_NUMBER, object + 1
       },
       "Class", object, sizeof(struct Class), NULL,
-      class_constructor, class_destructor, jco_object_equals, class_to_string,
+      jco_class_constructor, jco_class_destructor, jco_object_equals, jco_class_to_string,
       jco_object_hash_code
     }
  };

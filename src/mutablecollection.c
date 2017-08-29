@@ -71,7 +71,7 @@ mutable_collection_clear_impl (const void *_self)
 bool
 is_mutable_collection (const void *_self)
 {
-  return is_collection (_self) && class_implements_all (_self,
+  return is_collection (_self) && jco_class_implements_all (_self,
 				mutable_collection_add,
 				mutable_collection_remove,
 				0);

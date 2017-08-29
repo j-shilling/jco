@@ -16,11 +16,11 @@ initString()
 {
   if (NULL == String)
     String = jco_new (Class, "String", Object, sizeof(struct String),
-	construct, string_constructor,
-	destruct, string_destructor,
-	equals, string_equals,
-	hash_code, string_hash_code,
-	to_string, string_to_string,
+	jco_construct, string_constructor,
+	jco_destruct, string_destructor,
+	jco_equals, string_equals,
+	jco_hash_code, string_hash_code,
+	jco_to_string, string_to_string,
 	0);
 }
 
@@ -67,7 +67,7 @@ void
 string_append_object (const void *_self, void *o)
 {
   const struct String *self = jco_cast (_self, String);
-  const struct String *str = to_string (o);
+  const struct String *str = jco_to_string (o);
   string_append_cstring (self, (char *)string_to_cstring (str));
   jco_unref (str);
 }
@@ -108,7 +108,7 @@ bool
 string_ends_with_object (const void *_self, void *o)
 {
   return string_ends_with_cstring (_self,
-				   (char *)string_to_cstring (to_string (o)));
+				   (char *)string_to_cstring (jco_to_string (o)));
 }
 
 unsigned int

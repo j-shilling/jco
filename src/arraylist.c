@@ -26,7 +26,7 @@ initArrayList()
   if (!ArrayList)
     ArrayList = jco_new (Class, "ArrayList", ImmutableArrayList,
 			 sizeof (struct ArrayList),
-			construct, array_list_constructor,
+			jco_construct, array_list_constructor,
 			mutable_collection_add, array_list_add,
 			mutable_collection_remove, array_list_remove,
 			list_add_at, array_list_add_at,
@@ -56,7 +56,7 @@ array_list_get_growth_rate (void *_self)
 void *
 array_list_constructor (void *_self, va_list *app)
 {
-  struct ArrayList *self = super_construct (ArrayList, _self, app);
+  struct ArrayList *self = jco_super_construct (ArrayList, _self, app);
   self->growth_rate = ARRAY_LIST_DEFAULT_GROWTH_RATE;
   self->arr_size = ((struct ImmutableArrayList *)self)->size;
 
@@ -126,7 +126,7 @@ array_list_sort (const void *_self, Comparator comparator)
 {
   struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
 
-  qsort (self->arr, self->size, size_of (self->content_type), comparator);
+  qsort (self->arr, self->size, jco_size_of (self->content_type), comparator);
 }
 
 bool
@@ -137,7 +137,7 @@ array_list_remove (void const *_self, void const *o)
 
   for (int i = 0; i < super->size; i++)
     {
-      if (equals (super->arr[i], o))
+      if (jco_equals (super->arr[i], o))
 	{
 	  jco_unref(super->arr[i]);
 	  super->size --;

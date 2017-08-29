@@ -1,5 +1,6 @@
 #include <jco/jco.h>
 #include <jco/api/string.h>
+#include <jco/util/asprintf.h>
 
 #include <check.h>
 #include <string.h>
@@ -52,8 +53,8 @@ START_TEST (check_equals)
 {
   void *str = jco_new (String, test);
 
-  ck_assert (equals (str, test));
-  ck_assert (!equals (str, not));
+  ck_assert (jco_equals (str, test));
+  ck_assert (!jco_equals (str, not));
 
   jco_unref (str);
 }

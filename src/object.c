@@ -36,13 +36,13 @@ jco_new (struct Class const *const class, ...)
   struct Object *object;
   va_list ap;
 
-  object = jco_calloc (1, size_of (class));
+  object = jco_calloc (1, jco_size_of (class));
 
   object->class = class;
   object->magic_number = MAGIC_NUMBER;
 
   va_start (ap, class);
-  object = construct (object, &ap);
+  object = jco_construct (object, &ap);
   va_end (ap);
 
   return jco_ref (object);
@@ -52,7 +52,7 @@ void
 jco_delete (void *const _self)
 {
   if (_self)
-    jco_free (destruct (_self));
+    jco_free (jco_destruct (_self));
 }
 
 const struct Class *
@@ -92,7 +92,7 @@ jco_is_descendant (void const *const _self, struct Class const *const class)
       if (class != Object)
         while (myclass != class)
 	  if (myclass != Object)
-            myclass = super (myclass);
+            myclass = jco_super (myclass);
           else
             return false;
 
@@ -157,7 +157,7 @@ jco_object_to_string (const void *_self)
 {
   struct Object *self = jco_cast (_self, Object);
 
-  struct String *classname = to_string (jco_class_of (self));
+  struct String *classname = jco_to_string (jco_class_of (self));
 
   int len = snprintf (0, 0, "%s@%p",
 		  string_to_cstring (classname),

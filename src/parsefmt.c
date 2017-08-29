@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
 
 struct buf
 {
@@ -51,7 +52,7 @@ parsefmt (char **const restrict buf,
 	    }
 	  else if (fmt[i + 1] == 'O')
 	    {
-	      void *str = to_string(va_arg (ap, void *));
+	      void *str = jco_to_string(va_arg (ap, void *));
 	      add_string_to_buf (&b, string_to_cstring (str));
 	      jco_unref (str);
 

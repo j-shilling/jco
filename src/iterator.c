@@ -4,7 +4,7 @@
 bool
 is_iterator (const void *_self)
 {
-  return class_implements_all (_self, iterator_has_next, iterator_next, 0);
+  return jco_class_implements_all (_self, iterator_has_next, iterator_next, 0);
 }
 
 bool

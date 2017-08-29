@@ -13,18 +13,18 @@ void initImmutableArrayList()
   if (!ArrayListIterator)
     ArrayListIterator = jco_new (Class, "ArrayListIterator", Object,
 	sizeof (struct ArrayListIterator),
-	construct, array_list_iterator_constructor,
+	jco_construct, array_list_iterator_constructor,
 	iterator_has_next, array_list_iterator_has_next,
 	iterator_next, array_list_iterator_next,
 	0);
   if (!ImmutableArrayList)
     ImmutableArrayList = jco_new (Class, "ImmutableArrayList", Object,
 	sizeof (struct ImmutableArrayList),
-	construct, immutable_array_list_constructor,
-	destruct, immutable_array_list_destructor,
-	to_string, collection_to_string,
-	hash_code, list_hash_code,
-	equals, list_equals,
+	jco_construct, immutable_array_list_constructor,
+	jco_destruct, immutable_array_list_destructor,
+	jco_to_string, collection_to_string,
+	jco_hash_code, list_hash_code,
+	jco_equals, list_equals,
 
 	collection_content_type, array_list_content_type,
 	collection_equals, list_equals,
@@ -40,7 +40,7 @@ void initImmutableArrayList()
 void *
 immutable_array_list_constructor (void *_self, va_list *app)
 {
-  struct ImmutableArrayList *self = super_construct (ImmutableArrayList, _self, app);
+  struct ImmutableArrayList *self = jco_super_construct (ImmutableArrayList, _self, app);
   self->content_type = va_arg (*app, const struct Class *);
   jco_preconditions_check_not_null (self->content_type);
   self->size = 0;
@@ -117,7 +117,7 @@ immutable_array_list_destructor (void *_self)
 
   jco_free (self->arr);
 
-  return super_destruct (ImmutableArrayList, self);
+  return jco_super_destruct (ImmutableArrayList, self);
 }
 
 const struct Class *
@@ -169,7 +169,7 @@ array_list_sublist (const void *_self, unsigned int start, unsigned int end)
 void *
 array_list_iterator_constructor (void *_self, va_list *app)
 {
-  struct ArrayListIterator *self = super_construct (ArrayListIterator, _self, app);
+  struct ArrayListIterator *self = jco_super_construct (ArrayListIterator, _self, app);
   struct ImmutableArrayList *list =
       jco_cast (va_arg (*app, void *), ImmutableArrayList);
 
