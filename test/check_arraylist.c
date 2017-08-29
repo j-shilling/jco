@@ -252,6 +252,81 @@ START_TEST (check_immutable_array_list_sublist)
 }
 END_TEST
 
+START_TEST (check_new_array_list_with_items_and_collection);
+{
+  void *one = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *src = jco_new (ImmutableArrayList, String, two, three, 0);
+  void *list = jco_new (ArrayList, String, one, src, 0);
+
+  ck_assert_ptr_ne (list, 0);
+  ck_assert (!collection_is_empty (list));
+  ck_assert_int_eq (collection_size (list), 3);
+  ck_assert (is_collection (list));
+  ck_assert (is_list (list));
+  ck_assert (is_mutable_list (list));
+  ck_assert (!is_immutable_list (list));
+
+  ck_assert_ptr_eq (jco_unref (list_get (list, 0)), one);
+  ck_assert_ptr_eq (jco_unref (list_get (list, 1)), two);
+  ck_assert_ptr_eq (jco_unref (list_get (list, 2)), three);
+
+  jco_unref (one);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (src);
+  jco_unref (list);
+}
+END_TEST
+
+START_TEST (check_array_list_remove)
+{
+  void *one = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *four = jco_new (String, "4");
+  void *list = jco_new (ArrayList, String, one, two, three, 0);
+  
+  ck_assert (mutable_collection_remove (list, two));
+  ck_assert (!mutable_collection_remove (list, four));
+
+  ck_assert_int_eq (collection_size (list), 2);
+
+  ck_assert_ptr_eq (jco_unref (list_get (list, 0)), one);
+  ck_assert_ptr_eq (jco_unref (list_get (list, 1)), three);
+
+  jco_unref (one);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (four);
+  jco_unref (list);
+}
+END_TEST
+
+START_TEST (check_array_list_remove_at)
+{
+  void *one = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *list = jco_new (ArrayList, String, one, two, three, 0);
+  
+  ck_assert (list_remove_at (list, 1));
+
+  ck_assert_int_eq (collection_size (list), 2);
+
+  ck_assert_ptr_eq (jco_unref (list_get (list, 0)), one);
+  ck_assert_ptr_eq (jco_unref (list_get (list, 1)), three);
+
+  jco_unref (one);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (list);
+}
+END_TEST
+
+
+
 int
 main (void)
 {
@@ -272,6 +347,10 @@ main (void)
   tcase_add_test (tc, check_immutable_array_list_index_of);
   tcase_add_test (tc, check_immutable_array_list_last_index_of);
   tcase_add_test (tc, check_immutable_array_list_sublist);
+
+  tcase_add_test (tc, check_new_array_list_with_items_and_collection);
+  tcase_add_test (tc, check_array_list_remove);
+  tcase_add_test (tc, check_array_list_remove_at);
 
   suite_add_tcase (s, tc);
 

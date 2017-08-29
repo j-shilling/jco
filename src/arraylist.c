@@ -28,9 +28,11 @@ initArrayList()
 			 sizeof (struct ArrayList),
 			construct, array_list_constructor,
 			mutable_collection_add, array_list_add,
+			mutable_collection_remove, array_list_remove,
 			list_add_at, array_list_add_at,
 			list_set, array_list_set,
 			list_sort, array_list_sort,
+			list_remove_at, array_list_remove_at,
 			0);
 
 }
@@ -126,3 +128,40 @@ array_list_sort (const void *_self, Comparator comparator)
 
   qsort (self->arr, self->size, size_of (self->content_type), comparator);
 }
+
+bool
+array_list_remove (void const *_self, void const *o)
+{
+  jco_preconditions_check_arg (is_mutable_list (_self));
+  struct ImmutableArrayList *super = jco_cast (_self, ImmutableArrayList);
+
+  for (int i = 0; i < super->size; i++)
+    {
+      if (equals (super->arr[i], o))
+	{
+	  jco_unref(super->arr[i]);
+	  super->size --;
+	  memmove (super->arr + i,
+		   super->arr + i + 1,
+		   sizeof (void *) * (super->size - i));
+	  return true;
+	}
+    }
+
+  return false;
+}
+
+void *
+array_list_remove_at (void const *_self, unsigned int index)
+{
+  jco_preconditions_check_arg (is_mutable_list (_self));
+  struct ImmutableArrayList *super = jco_cast (_self, ImmutableArrayList);
+
+  void *ret = super->arr[index];
+  super->size --;
+  memmove (super->arr + index,
+	   super->arr + index + 1,
+	   sizeof (void *) * (super->size - index));
+  return ret;
+}
+
