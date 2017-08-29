@@ -11,6 +11,11 @@ START_TEST (check_new_immutable_array_list)
   ck_assert_ptr_ne (list, 0);
   ck_assert (collection_is_empty (list));
   ck_assert (collection_content_type (list) == String);
+  ck_assert (is_collection (list));
+  ck_assert (!is_mutable_collection (list));
+  ck_assert (is_list (list));
+  ck_assert (is_immutable_list (list));
+  ck_assert (!is_mutable_list (list));
 
   jco_unref (list);
 }
@@ -169,6 +174,83 @@ START_TEST (check_immutable_array_list_equals)
 }
 END_TEST
 
+START_TEST (check_immutable_array_list_get)
+{
+  void *one = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *list = jco_new (ImmutableArrayList, String, one, two, three, 0);
+
+  ck_assert_ptr_eq (one, jco_unref(list_get (list, 0)));
+  ck_assert_ptr_eq (two, jco_unref(list_get (list, 1)));
+  ck_assert_ptr_eq (three, jco_unref(list_get (list, 2)));
+
+  jco_unref (one);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (list);
+}
+END_TEST
+
+START_TEST (check_immutable_array_list_index_of)
+{
+  void *one = jco_new (String, "1");
+  void *one1 = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *list = jco_new (ImmutableArrayList, String, one, two, one1, three, 0);
+
+  ck_assert_int_eq (list_index_of (list, one), 0);
+  ck_assert_int_eq (list_index_of (list, two), 1);
+  ck_assert_int_eq (list_index_of (list, three), 3);
+
+  jco_unref (one);
+  jco_unref (one1);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (list);
+}
+END_TEST
+
+START_TEST (check_immutable_array_list_last_index_of)
+{
+  void *one = jco_new (String, "1");
+  void *one1 = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *list = jco_new (ImmutableArrayList, String, one, two, one1, three, 0);
+
+  ck_assert_int_eq (list_last_index_of (list, one), 2);
+
+  jco_unref (one);
+  jco_unref (one1);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (list);
+}
+END_TEST
+
+START_TEST (check_immutable_array_list_sublist)
+{
+  void *one = jco_new (String, "1");
+  void *one1 = jco_new (String, "1");
+  void *two = jco_new (String, "2");
+  void *three = jco_new (String, "3");
+  void *list = jco_new (ImmutableArrayList, String, one, two, one1, three, 0);
+  void *sub = jco_new (ImmutableArrayList, String, one, two, 0);
+  void *sublist = list_sublist (list, 0, 1);
+
+  ck_assert (list_equals (sub, sublist));
+
+  jco_unref (one);
+  jco_unref (one1);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (list);
+  jco_unref (sub);
+  jco_unref (sublist);
+}
+END_TEST
 
 int
 main (void)
@@ -186,6 +268,10 @@ main (void)
   tcase_add_test (tc, check_immutable_array_list_contains);
   tcase_add_test (tc, check_immutable_array_list_contains_all);
   tcase_add_test (tc, check_immutable_array_list_equals);
+  tcase_add_test (tc, check_immutable_array_list_get);
+  tcase_add_test (tc, check_immutable_array_list_index_of);
+  tcase_add_test (tc, check_immutable_array_list_last_index_of);
+  tcase_add_test (tc, check_immutable_array_list_sublist);
 
   suite_add_tcase (s, tc);
 

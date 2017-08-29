@@ -38,8 +38,7 @@ list_index_of_impl (const void *_self, const void *o)
 static int
 list_last_index_of_impl (const void *_self, const void *o)
 {
-  int size = collection_size (_self);
-    for (int i = size; i >= 0; i++)
+    for (int i = collection_size (_self) - 1; i >= 0; i--)
       if (equals (o, jco_unref (list_get (_self, i))))
         return i;
 

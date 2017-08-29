@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #define jco_preconditions_check_state(expr)			\
-  if (!expr)						\
+  if (!(expr))						\
     {							\
       jco_log (SEVERE, 				\
 	"%s:%d, %s returned false.",			\
@@ -13,7 +13,7 @@
       exit (EXIT_FAILURE);				\
     }
 #define jco_preconditions_check_state_msg(expr, fmt, ...)	\
-  if (!expr)						\
+  if (!(expr))						\
     {							\
       jco_log (SEVERE, fmt, ##__VA_ARGS__);		\
       exit (EXIT_FAILURE);				\

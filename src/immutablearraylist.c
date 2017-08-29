@@ -155,7 +155,7 @@ array_list_sublist (const void *_self, unsigned int start, unsigned int end)
 
   int size = (end - start) + 1;
   void **arr = jco_calloc (size, sizeof (void *));
-  memcpy (arr, self->arr + start, size);
+  memcpy (arr, self->arr + start, size * sizeof (void *));
 
   buf->arr = arr;
   buf->size = size;
