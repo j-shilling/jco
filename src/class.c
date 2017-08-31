@@ -187,7 +187,7 @@ jco_super_destruct (struct Class const *const class, void *_self)
 struct String *
 jco_to_string (void const *const _self)
 {
-  initString ();
+  jco_init_string();
   struct String *(*method)(void const *const _self) = 0;
   DEFINE_SELECTOR (jco_to_string, method, _self)
 }

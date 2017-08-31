@@ -12,31 +12,31 @@
 const struct Class * String = NULL;
 
 void
-initString()
+jco_init_string()
 {
   if (NULL == String)
     String = jco_new (Class, "String", Object, sizeof(struct String),
-	jco_construct, string_constructor,
-	jco_destruct, string_destructor,
-	jco_equals, string_equals,
-	jco_hash_code, string_hash_code,
-	jco_to_string, string_to_string,
+	jco_construct, jco_string_constructor,
+	jco_destruct, jco_string_destructor,
+	jco_equals, jco_string_equals,
+	jco_hash_code, jco_string_hash_code,
+	jco_to_string, jco_string_to_string,
 	0);
 }
 
 const char *
-string_to_cstring (const void *_self)
+jco_string_to_cstring (void const *const _self)
 {
   struct String *self = jco_cast (_self, String);
   return self->text;
 }
 
 void
-string_append_char (const void *_self, char ch)
+jco_string_append_char (void const *const _self, char const ch)
 {
   struct String *self = jco_cast (_self, String);
 
-  int len = string_length (self) + 1;
+  int len = jco_string_length (self) + 1;
   char *newtext = jco_calloc (len + 1, sizeof (char));
   strcpy (newtext, self->text);
   newtext[len - 1] = ch;
@@ -46,39 +46,37 @@ string_append_char (const void *_self, char ch)
 }
 
 void
-string_append_cstring (const void *_self, char *str)
+jco_string_append_cstring (void const *const _self, char const *const _str)
 {
   struct String *self = jco_cast (_self, String);
-  if (NULL == str)
-    str = "";
+  char const *const str = _str ? _str : "";
 
   int len = snprintf (0, 0, "%s%s", self->text, str);
   char *newtext = jco_calloc (len + 1, sizeof (char));
   sprintf (newtext, "%s%s", self->text, str);
 
   if (self->text)
-    {
-      free ((void *)self->text);
-    }
+    free ((void *)self->text);
+
   self->text = newtext;
 }
 
 void
-string_append_object (const void *_self, void *o)
+jco_string_append_object (void const *const _self, void const *const o)
 {
   const struct String *self = jco_cast (_self, String);
   const struct String *str = jco_to_string (o);
-  string_append_cstring (self, (char *)string_to_cstring (str));
+  jco_string_append_cstring (self, (char *)jco_string_to_cstring (str));
   jco_unref (str);
 }
 
 bool
-string_ends_with_char (const void *_self, char ch)
+jco_string_ends_with_char (void const *const _self, char const ch)
 {
-  return string_char_at (_self, string_length (_self) - 1) == ch;
+  return jco_string_char_at (_self, jco_string_length (_self) - 1) == ch;
 }
 bool
-string_ends_with_cstring (const void *_self, char *str)
+jco_string_ends_with_cstring (void const *const _self, char const *const str)
 {
   if (NULL == str)
     {
@@ -87,7 +85,7 @@ string_ends_with_cstring (const void *_self, char *str)
     }
 
   struct String *self = jco_cast (_self, String);
-  int mylen = string_length (self);
+  int mylen = jco_string_length (self);
   int yourlen = strlen (str);
   if (yourlen > mylen)
     return false;
@@ -105,32 +103,32 @@ string_ends_with_cstring (const void *_self, char *str)
 }
 
 bool
-string_ends_with_object (const void *_self, void *o)
+jco_string_ends_with_object (void const *const _self, void const *const o)
 {
-  return string_ends_with_cstring (_self,
-				   (char *)string_to_cstring (jco_to_string (o)));
+  return jco_string_ends_with_cstring (_self,
+				   (char *)jco_string_to_cstring (jco_to_string (o)));
 }
 
 unsigned int
-string_length(const void *_self)
+jco_string_length(void const *const _self)
 {
   struct String *self = jco_cast (_self, String);
   return strlen (self->text);
 }
 
 char
-string_char_at (const void *_self, unsigned int index)
+jco_string_char_at (void const *const _self, unsigned int const index)
 {
   const struct String *self = jco_cast (_self, String);
 
-  if (index >= string_length (self))
+  if (index >= jco_string_length (self))
     return '\0';
 
   return self->text[index];
 }
 
 void *
-string_constructor (void *_self, va_list *app)
+jco_string_constructor (void *_self, va_list *app)
 {
   struct String *self = _self;
 
@@ -146,7 +144,7 @@ string_constructor (void *_self, va_list *app)
 }
 
 void *
-string_destructor (void *_self)
+jco_string_destructor (void *_self)
 {
   struct String *self = jco_cast (_self, String);
 
@@ -157,7 +155,7 @@ string_destructor (void *_self)
 }
 
 bool
-string_equals (const void *_self, const void *o)
+jco_string_equals (void const *const _self, void const *const o)
 {
   if (NULL == o)
     return _self == NULL;
@@ -171,16 +169,16 @@ string_equals (const void *_self, const void *o)
 }
 
 struct String *
-string_to_string (const void *_self)
+jco_string_to_string (void const *const _self)
 {
   return jco_cast (_self, String);
 }
 
 int
-string_hash_code (const void *_self)
+jco_string_hash_code (void const *const _self)
 {
   int h = 0;
-  const char *cstr = string_to_cstring (_self);
+  const char *cstr = jco_string_to_cstring (_self);
   int len = strlen (cstr);
 
   for (int i = 0; i < len; i ++)

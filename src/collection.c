@@ -124,11 +124,11 @@ collection_to_string (const void *_self)
 
   while (iterator_has_next (it))
     {
-      string_append (ret, jco_unref (iterator_next (it)));
+      jco_string_append (ret, jco_unref (iterator_next (it)));
       if (iterator_has_next (it))
-	string_append (ret, ", ");
+	jco_string_append (ret, ", ");
     }
-  string_append (ret, "}");
+  jco_string_append (ret, "}");
   jco_unref (it);
   return ret;
 }

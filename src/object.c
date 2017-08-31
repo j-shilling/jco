@@ -160,12 +160,12 @@ jco_object_to_string (const void *_self)
   struct String *classname = jco_to_string (jco_class_of (self));
 
   int len = snprintf (0, 0, "%s@%p",
-		  string_to_cstring (classname),
+		  jco_string_to_cstring (classname),
 		  self);
 
   char *buf = jco_calloc (1, len + 1);
   sprintf (buf, "%s@%p",
-		  string_to_cstring (classname),
+		  jco_string_to_cstring (classname),
 		  self);
   struct String *ret = jco_new (String, buf);
   jco_free (buf);

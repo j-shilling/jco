@@ -326,13 +326,13 @@ START_TEST (check_array_list_remove_at)
 END_TEST
 
 static int
-string_cmp (const void *o1, const void *o2)
+jco_string_cmp (const void *o1, const void *o2)
 {
   struct String *x = jco_cast (*(void **)o1, String);
   struct String *y = jco_cast (*(void **)o2, String);
 
-  return strcmp (string_to_cstring (x),
-		 string_to_cstring (y));
+  return strcmp (jco_string_to_cstring (x),
+		 jco_string_to_cstring (y));
 }
 
 START_TEST (check_array_list_sort)
@@ -342,7 +342,7 @@ START_TEST (check_array_list_sort)
   void *three = jco_new (String, "c");
   void *list = jco_new (ArrayList, String, two, three, one, 0);
   
-  list_sort (list, string_cmp);
+  list_sort (list, jco_string_cmp);
 
   ck_assert_ptr_eq (jco_unref (list_get (list, 0)), one);
   ck_assert_ptr_eq (jco_unref (list_get (list, 1)), two);
@@ -359,7 +359,7 @@ END_TEST
 int
 main (void)
 {
-  initString();
+  jco_init_string();
   initArrayList();
 
   Suite *s = suite_create ("ArrayList");

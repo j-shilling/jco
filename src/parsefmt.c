@@ -28,7 +28,7 @@ add_char_to_buf (struct buf *restrict buf, char const ch)
 }
 
 static void
-add_string_to_buf (struct buf *restrict buf,
+add_jco_string_to_buf (struct buf *restrict buf,
 		   char const *const restrict str)
 {
   for (int i = 0; i < strlen (str); i ++)
@@ -53,7 +53,7 @@ parsefmt (char **const restrict buf,
 	  else if (fmt[i + 1] == 'O')
 	    {
 	      void *str = jco_to_string(va_arg (ap, void *));
-	      add_string_to_buf (&b, string_to_cstring (str));
+	      add_jco_string_to_buf (&b, jco_string_to_cstring (str));
 	      jco_unref (str);
 
 	      i++;
@@ -102,7 +102,7 @@ parsefmt (char **const restrict buf,
 
 	      vsprintf (sl, s.buf, ap);
 
-	      add_string_to_buf (&b, sl);
+	      add_jco_string_to_buf (&b, sl);
 
 	      jco_free (sl);
 	    }
