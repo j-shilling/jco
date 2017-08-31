@@ -97,7 +97,9 @@ parsefmt (char **const restrict buf,
 	      va_list temp;
 	      va_copy (temp, ap);
 
-	      char *sl = jco_malloc (vsnprintf (0, 0, s.buf, temp));
+	      char *sl = jco_malloc (vsnprintf (0, 0, s.buf, temp) + 1);
+	      va_end (temp);
+
 	      vsprintf (sl, s.buf, ap);
 
 	      add_string_to_buf (&b, sl);

@@ -325,6 +325,35 @@ START_TEST (check_array_list_remove_at)
 }
 END_TEST
 
+static int
+string_cmp (const void *o1, const void *o2)
+{
+  struct String *x = jco_cast (*(void **)o1, String);
+  struct String *y = jco_cast (*(void **)o2, String);
+
+  return strcmp (string_to_cstring (x),
+		 string_to_cstring (y));
+}
+
+START_TEST (check_array_list_sort)
+{
+  void *one = jco_new (String, "a");
+  void *two = jco_new (String, "b");
+  void *three = jco_new (String, "c");
+  void *list = jco_new (ArrayList, String, two, three, one, 0);
+  
+  list_sort (list, string_cmp);
+
+  ck_assert_ptr_eq (jco_unref (list_get (list, 0)), one);
+  ck_assert_ptr_eq (jco_unref (list_get (list, 1)), two);
+  ck_assert_ptr_eq (jco_unref (list_get (list, 2)), three);
+
+  jco_unref (one);
+  jco_unref (two);
+  jco_unref (three);
+  jco_unref (list);
+}
+END_TEST
 
 
 int
@@ -351,6 +380,7 @@ main (void)
   tcase_add_test (tc, check_new_array_list_with_items_and_collection);
   tcase_add_test (tc, check_array_list_remove);
   tcase_add_test (tc, check_array_list_remove_at);
+  tcase_add_test (tc, check_array_list_sort);
 
   suite_add_tcase (s, tc);
 

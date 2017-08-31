@@ -126,7 +126,10 @@ array_list_sort (const void *_self, Comparator comparator)
 {
   struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
 
-  qsort (self->arr, self->size, jco_size_of (self->content_type), comparator);
+  qsort (self->arr,
+	 self->size,
+	 sizeof (void *),
+	 comparator);
 }
 
 bool
