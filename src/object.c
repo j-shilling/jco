@@ -177,5 +177,5 @@ jco_object_to_string (const void *_self)
 int
 jco_object_hash_code (const void *_self)
 {
-  return (int) (long) _self;
+  return jco_hash_object (_self);
 }

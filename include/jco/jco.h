@@ -31,6 +31,7 @@
 #include <jco/base/logger.h>
 #include <jco/base/preconditions.h>
 #include <jco/base/memory.h>
+#include <jco/base/hash.h>
 
 #include <jco/api/string.h>
 

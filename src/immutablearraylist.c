@@ -194,5 +194,6 @@ array_list_iterator_next (const void *_self)
 
   void *ret = jco_ref (self->arr[self->cur]);
   self->cur ++;
+
   return ret;
 }

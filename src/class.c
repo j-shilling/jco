@@ -109,14 +109,17 @@ jco_class_get_method (void const *const _self, Selector const selector)
   else if (selector == (Selector) jco_to_string)
     return (Method) class->to_string;
 
-  struct VTableEntry *bin = class->vtable->entries[get_index (class->vtable,
-							      selector)];
+  if (class->vtable)
+    {
+      struct VTableEntry *bin = class->vtable->entries[get_index (class->vtable,
+								  selector)];
 
-  while (bin)
-    if (bin->key == selector)
-      return bin->item;
-    else
-      bin = bin->next;
+      while (bin)
+	if (bin->key == selector)
+	  return bin->item;
+	else
+	  bin = bin->next;
+    }
 
   return NULL;
 }

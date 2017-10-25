@@ -10,10 +10,13 @@ mutable_collection_add_all_impl (const void *_self, const void *c)
       return false;
     }
 
-  bool ret = false;
+  bool ret = true;
   void *it = collection_iterator (c);
   while (iterator_has_next (it))
-    ret = ret && mutable_collection_add (_self, jco_unref(iterator_next(it)));
+    {
+      bool result = mutable_collection_add (_self, jco_unref(iterator_next(it)));
+      ret &= result;
+    }
   jco_unref (it);
 
   return ret;
@@ -28,10 +31,15 @@ mutable_collection_remove_all_impl (const void *_self, const void *c)
         return false;
       }
 
-  bool ret = false;
+  bool ret = true;
   void *it = collection_iterator (c);
   while (iterator_has_next (it))
-    ret = ret && mutable_collection_remove (_self, jco_unref(iterator_next(it)));
+    {
+      void *item = iterator_next (it);
+      bool result = mutable_collection_remove (_self, item);
+      ret = ret && result;
+      jco_unref (item);
+    }
   jco_unref (it);
 
   return ret;
@@ -46,13 +54,16 @@ mutable_collection_retain_all_impl (const void *_self, const void *c)
         return false;
       }
 
-  bool ret = false;
+  bool ret = true;
   void *it = collection_iterator (_self);
   while (iterator_has_next (it))
     {
       void * item = iterator_next (it);
       if (!collection_contains (c, item))
-	ret = ret && mutable_collection_remove (_self, item);
+	{
+	  bool result = mutable_collection_remove (_self, item);
+	  ret = ret && result;
+	}
       jco_unref (item);
     }
   jco_unref (it);
@@ -108,7 +119,7 @@ mutable_collection_remove (const void *_self, const void *o)
 bool
 mutable_collection_remove_all (const void *_self, const void *c)
 {
-  bool (*dft) (const void *, const void *) = mutable_collection_remove_all;
+  bool (*dft) (const void *, const void *) = mutable_collection_remove_all_impl;
   DEFINE_SELECTOR (mutable_collection_remove_all, dft, _self, c)
 }
 

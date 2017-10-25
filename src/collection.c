@@ -13,8 +13,12 @@ collection_count (const void *_self, const void *o)
   void *it = collection_iterator (_self);
 
   while (iterator_has_next (it))
-    if (jco_equals (o, jco_unref (iterator_next (it))))
-      ret++;
+    {
+      void *item = iterator_next (it);
+      if (jco_equals (o, item))
+	ret++;
+      jco_unref (item);
+    }
   jco_unref (it);
 
   return ret;
@@ -28,8 +32,15 @@ collection_contains_impl (const void *_self, const void *o)
 
   void *it = collection_iterator (_self);
   while (iterator_has_next (it))
-    if (jco_equals (o, jco_unref (iterator_next(it))))
-      return true;
+    {
+      void *item = iterator_next (it);
+      if (jco_equals (o, item))
+	{
+	  jco_unref (item);
+	  return true;
+	}
+      jco_unref (item);
+    }
 
   return false;
 }

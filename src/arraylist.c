@@ -12,7 +12,7 @@ array_list_grow (struct ArrayList *self)
 {
   void **arr = jco_calloc (self->arr_size + self->growth_rate, sizeof (void *));
 
-  memcpy (arr, ((struct ImmutableArrayList *)self)->arr, self->arr_size);
+  memcpy (arr, ((struct ImmutableArrayList *)self)->arr, self->arr_size * sizeof (void *));
   jco_free (((struct ImmutableArrayList *)self)->arr);
   ((struct ImmutableArrayList *)self)->arr = arr;
 
@@ -29,6 +29,7 @@ initArrayList()
 			jco_construct, array_list_constructor,
 			mutable_collection_add, array_list_add,
 			mutable_collection_remove, array_list_remove,
+			mutable_collection_clear, array_list_clear,
 			list_add_at, array_list_add_at,
 			list_set, array_list_set,
 			list_sort, array_list_sort,
@@ -168,3 +169,14 @@ array_list_remove_at (void const *_self, unsigned int index)
   return ret;
 }
 
+void
+array_list_clear (const void *_self)
+{
+  jco_preconditions_check_arg (is_mutable_list (_self));
+  struct ImmutableArrayList *self = jco_cast (_self, ImmutableArrayList);
+
+  for (int i = 0; i < self->size; i++)
+    jco_unref (self->arr[i]);
+  
+  self->size = 0;
+}

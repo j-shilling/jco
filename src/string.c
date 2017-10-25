@@ -177,12 +177,5 @@ jco_string_to_string (void const *const _self)
 int
 jco_string_hash_code (void const *const _self)
 {
-  int h = 0;
-  const char *cstr = jco_string_to_cstring (_self);
-  int len = strlen (cstr);
-
-  for (int i = 0; i < len; i ++)
-    h = 31 * h + (int)(*(cstr++));
-
-  return h;
+  return jco_hash_string (jco_string_to_cstring (_self));
 }
